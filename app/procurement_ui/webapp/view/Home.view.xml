@@ -11,7 +11,7 @@
             <VBox class="sapUiSmallMargin">
                 <Title text="Choose your procurement method" level="H2" class="sapUiSmallMarginBottom"/>
                 <HBox alignItems="Center" justifyContent="Center" wrap="Wrap">
-                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressCatalog">
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressCatalog" semanticRole="ListItem">
                         <f:header>
                             <card:Header title="Catalog Purchasing" subtitle="Browse vendor catalogs" iconSrc="sap-icon://cart"/>
                         </f:header>
@@ -23,7 +23,7 @@
                         </f:content>
                     </f:Card>
 
-                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressManual">
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressManual" semanticRole="ListItem">
                         <f:header>
                             <card:Header title="Manual Procurement" subtitle="Free text requisition" iconSrc="sap-icon://form"/>
                         </f:header>

@@ -10,7 +10,7 @@
         </headerContent>
         <content>
             <List
-                interactions="Inactive"
+
                 items="{
                     path: 'catalog>/items'
                 }"
