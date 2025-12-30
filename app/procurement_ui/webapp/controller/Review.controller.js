@@ -77,6 +77,7 @@ sap.ui.define([
                 var oListBinding = oModel.bindList("/RequisitionHeader");
 
                 var oData = {
+                    requisitionHeaderID: "PR-" + Date.now(), // Generate a unique ID
                     requestor: "Employee User", // Mock user
                     requestType: aItems[0].type, // Just take first item's type or generic
                     status: "Created", // Initial Status

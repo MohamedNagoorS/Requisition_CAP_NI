@@ -27,7 +27,8 @@ sap.ui.define([
                 var sRequisitionId = oEvent.getParameter("arguments").requisitionId;
 
                 // Bind the view to the specific Requisition
-                var sPath = "/RequisitionHeader(" + sRequisitionId + ")";
+                // Note: ID is a string (UUID), so it must be quoted in the path for OData V4 Binding
+                var sPath = "/RequisitionHeader(" + (sRequisitionId.includes("'") ? sRequisitionId : "'" + sRequisitionId + "'") + ")";
                 this.getView().bindElement({
                     path: sPath,
                     parameters: {
