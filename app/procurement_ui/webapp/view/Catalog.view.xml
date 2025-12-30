@@ -1,0 +1,47 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.Catalog"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="Vendor Catalog" showNavButton="true" navButtonPress=".onNavBack">
+        <headerContent>
+             <Button icon="sap-icon://cart" text="{= ${cart>/items}.length }" press=".onGoToCart"/>
+        </headerContent>
+        <content>
+            <List
+                interactions="Inactive"
+                items="{
+                    path: 'catalog>/items'
+                }"
+                noDataText="No products found"
+                class="sapUiResponsiveMargin"
+                width="auto">
+                <items>
+                    <ObjectListItem
+                        title="{catalog>productName}"
+                        number="{
+                            parts: [{path: 'catalog>unitPrice'}, {path: 'view>/currencyCode'}],
+                            type: 'sap.ui.model.type.Currency',
+                            formatOptions: {
+                                showMeasure: false
+                            }
+                        }"
+                        numberUnit="{view>/currencyCode}"
+                        intro="{catalog>category}">
+                        <attributes>
+                            <ObjectAttribute text="{catalog>description}"/>
+                            <ObjectAttribute text="Stock: {catalog>stockLevel}"/>
+                        </attributes>
+                        <firstStatus>
+                            <ObjectStatus text="{= ${catalog>stockLevel} > 0 ? 'In Stock' : 'Out of Stock' }" state="{= ${catalog>stockLevel} > 0 ? 'Success' : 'Error' }"/>
+                        </firstStatus>
+                        <secondStatus>
+                             <ObjectStatus icon="sap-icon://add" state="Information" active="true" press=".onAddToCart"/>
+                        </secondStatus>
+                    </ObjectListItem>
+                </items>
+            </List>
+        </content>
+    </Page>
+</mvc:View>

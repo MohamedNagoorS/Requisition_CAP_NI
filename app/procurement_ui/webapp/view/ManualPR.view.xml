@@ -1,0 +1,35 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.ManualPR"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="Manual Procurement Request" showNavButton="true" navButtonPress=".onNavBack">
+        <headerContent>
+             <Button icon="sap-icon://cart" text="{= ${cart>/items}.length }" press=".onGoToCart"/>
+        </headerContent>
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <f:SimpleForm editable="true" layout="ResponsiveGridLayout" title="Item Details">
+                    <f:content>
+                        <Label text="Material Description" required="true"/>
+                        <Input value="{form>/materialName}" placeholder="e.g., Custom Office Desk"/>
+                        
+                        <Label text="Quantity" required="true"/>
+                        <Input value="{form>/quantity}" type="Number" placeholder="1"/>
+                        
+                        <Label text="Estimated Price" required="true"/>
+                        <Input value="{form>/price}" type="Number" placeholder="0.00" description="{view>/currencyCode}"/>
+                        
+                        <Label text="Cost Center" required="true"/>
+                        <Input value="{form>/costCenter}" placeholder="e.g., CC-IT-001"/>
+                    </f:content>
+                </f:SimpleForm>
+                
+                <Button text="Add to Request" type="Emphasized" press=".onAddToRequest" class="sapUiMediumMarginTop"/>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

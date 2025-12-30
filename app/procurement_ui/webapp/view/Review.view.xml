@@ -1,0 +1,43 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.Review"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="Review &amp; Submit" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <List
+                headerText="Items in Cart"
+                items="{
+                    path: 'cart>/items'
+                }"
+                noDataText="Your cart is empty"
+                class="sapUiResponsiveMargin"
+                width="auto">
+                <items>
+                    <ObjectListItem
+                        title="{cart>productName}"
+                        number="{
+                            parts: [{path: 'cart>price'}, {path: 'view>/currencyCode'}],
+                            type: 'sap.ui.model.type.Currency',
+                            formatOptions: {
+                                showMeasure: false
+                            }
+                        }"
+                        numberUnit="{view>/currencyCode}"
+                        intro="{cart>type}">
+                        <attributes>
+                            <ObjectAttribute text="Quantity: {cart>quantity}"/>
+                            <ObjectAttribute text="Total: {= ${cart>price} * ${cart>quantity} } {view>/currencyCode}"/>
+                        </attributes>
+                    </ObjectListItem>
+                </items>
+            </List>
+            
+             <VBox class="sapUiMediumMargin">
+                 <Title text="Total Value: {cart>/total} {view>/currencyCode}" level="H2" class="sapUiSmallMarginBottom"/>
+                 <Button text="Send to Manager for Approval" type="Accept" press=".onSubmit" enabled="{= ${cart>/items}.length > 0 }" width="100%"/>
+             </VBox>
+        </content>
+    </Page>
+</mvc:View>

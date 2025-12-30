@@ -1,0 +1,6 @@
+vendorCatalogAID;productName;description;unitPrice;stockLevel;category
+a1;High-End Laptop;16GB RAM, 1TB SSD, i9 Processor;2500.00;50;Electronics
+a2;Budget Laptop;8GB RAM, 512GB SSD, i5 Processor;800.00;100;Electronics
+a3;Wireless Mouse;Ergonomic wireless mouse;25.00;200;Accessories
+a4;27-inch Monitor;4K UHD Monitor;350.00;75;Electronics
+a5;Mechanical Keyboard;RGB Mechanical Keyboard with Cherry MX switches;120.00;60;Accessories

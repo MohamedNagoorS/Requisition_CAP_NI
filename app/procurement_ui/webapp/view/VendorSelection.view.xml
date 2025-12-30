@@ -1,0 +1,45 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.VendorSelection"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="Vendor Selection &amp; AI Helper" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <l:Splitter height="100%">
+                <l:contentAreas>
+                    <VBox width="50%" class="sapUiMediumMargin">
+                        <Title text="Select Vendor" level="H2"/>
+                        <VBox class="sapUiSmallMarginTop">
+                            <RadioButtonGroup id="vendorGroup" columns="1" select=".onVendorSelect">
+                                <buttons>
+                                    <RadioButton text="Vendor A (Tech Specialist)"/>
+                                    <RadioButton text="Vendor B (Furniture &amp; Office)"/>
+                                </buttons>
+                            </RadioButtonGroup>
+                            <Button text="Proceed to Catalog" type="Emphasized" press=".onProceed" enabled="{view>/vendorSelected}" class="sapUiMediumMarginTop"/>
+                        </VBox>
+                    </VBox>
+                    <VBox width="50%" class="sapUiMediumMargin">
+                        <Title text="AI Assistant" level="H2"/>
+                        <ScrollContainer height="400px" vertical="true" class="sapUiSmallMarginTop sapUiSmallMarginBottom borderBox" id="chatContainer">
+                            <List items="{chat>/messages}" noDataText="Ask me anything...">
+                                <FeedListItem
+                                    sender="{chat>sender}"
+                                    text="{chat>text}"
+                                    info="{chat>timestamp}"
+                                    icon="{chat>icon}"
+                                    timestamp="{chat>timestamp}"/>
+                            </List>
+                        </ScrollContainer>
+                        <HBox>
+                            <Input id="chatInput" placeholder="Ask AI helper..." width="80%" submit=".onAskAI"/>
+                            <Button text="Ask" press=".onAskAI" width="20%"/>
+                        </HBox>
+                    </VBox>
+                </l:contentAreas>
+            </l:Splitter>
+        </content>
+    </Page>
+</mvc:View>
