@@ -35,6 +35,19 @@
                         </f:content>
                     </f:Card>
                 </HBox>
+                <HBox alignItems="Center" justifyContent="Center" wrap="Wrap" class="sapUiSmallMarginTop">
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressHistory" semanticRole="ListItem">
+                        <f:header>
+                            <card:Header title="My Requisitions" subtitle="View history and status" iconSrc="sap-icon://history"/>
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiSmallMargin">
+                                <Text text="Track the status of your submitted requisitions."/>
+                                <Button text="View History" type="Default" press=".onPressHistory" class="sapUiSmallMarginTop" width="100%"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                </HBox>
             </VBox>
         </content>
     </Page>

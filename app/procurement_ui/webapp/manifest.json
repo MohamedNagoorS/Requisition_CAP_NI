@@ -128,6 +128,13 @@
                     "target": [
                         "TargetPRDetails"
                     ]
+                },
+                {
+                    "name": "RouteRequisitionList",
+                    "pattern": "requisitionList",
+                    "target": [
+                        "TargetRequisitionList"
+                    ]
                 }
             ],
             "targets": {
@@ -172,6 +179,13 @@
                     "clearControlAggregation": false,
                     "viewId": "PRDetails",
                     "viewName": "PRDetails"
+                },
+                "TargetRequisitionList": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "RequisitionList",
+                    "viewName": "RequisitionList"
                 }
             }
         },

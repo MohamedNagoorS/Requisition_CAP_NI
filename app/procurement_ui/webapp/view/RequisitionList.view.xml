@@ -1,0 +1,55 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.RequisitionList"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="My Requisitions" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <Table
+                id="requisitionTable"
+                inset="false"
+                items="{
+                    path: '/RequisitionHeader',
+                    sorter: {
+                        path: 'createdAt',
+                        descending: true
+                    },
+                    parameters: {
+                        $count: true
+                    }
+                }"
+                class="sapUiResponsiveMargin"
+                width="auto">
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title text="Requisitions" level="H2"/>
+                        <ToolbarSpacer/>
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column><Text text="Requisition ID"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Status"/></Column>
+                    <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Total Value"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Vendor"/></Column>
+                    <Column hAlign="End"><Text text="Created At"/></Column>
+                </columns>
+                <items>
+                    <ColumnListItem type="Navigation" press=".onPressRequisition">
+                        <cells>
+                            <ObjectIdentifier title="{requisitionHeaderID}"/>
+                            <ObjectStatus text="{status}" state="{= ${status} === 'Pending Approval' ? 'Warning' : (${status} === 'Created' ? 'Information' : 'Success') }"/>
+                            <ObjectNumber number="{
+                                parts: [{path: 'totalValue'}, {path: 'view>/currencyCode'}],
+                                type: 'sap.ui.model.type.Currency',
+                                formatOptions: { showMeasure: false }
+                            }" unit="USD" />
+                            <Text text="{selectedVendor}"/>
+                            <Text text="{createdAt}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
