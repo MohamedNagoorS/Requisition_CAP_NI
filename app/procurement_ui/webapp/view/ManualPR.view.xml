@@ -25,6 +25,13 @@
                         
                         <Label text="Cost Center" required="true"/>
                         <Input value="{form>/costCenter}" placeholder="e.g., CC-IT-001"/>
+
+                        <Label text="Preferred Vendor"/>
+                        <ComboBox value="{form>/vendor}" placeholder="Select or type vendor">
+                            <core:Item key="Vendor A" text="Vendor A"/>
+                            <core:Item key="Vendor B" text="Vendor B"/>
+                            <core:Item key="Other" text="Other"/>
+                        </ComboBox>
                     </f:content>
                 </f:SimpleForm>
                 

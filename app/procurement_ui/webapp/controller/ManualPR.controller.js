@@ -22,7 +22,8 @@ sap.ui.define([
                     materialName: "",
                     quantity: 1,
                     price: null,
-                    costCenter: ""
+                    costCenter: "",
+                    vendor: ""
                 });
                 this.getView().setModel(oFormModel, "form");
             },
@@ -49,24 +50,34 @@ sap.ui.define([
                 }
 
                 var oCartModel = this.getOwnerComponent().getModel("cart");
-                if (!oCartModel) {
-                    oCartModel = new JSONModel({ items: [], total: 0 });
-                    this.getOwnerComponent().setModel(oCartModel, "cart");
+                // Ensure items array exists
+                if (!oCartModel.getProperty("/items")) {
+                    oCartModel.setProperty("/items", []);
                 }
 
-                var aItems = oCartModel.getProperty("/items");
+                var aItems = oCartModel.getProperty("/items") || [];
 
-                aItems.push({
+                // Add to cart with new array ref
+                var aNewItems = aItems.concat([{
                     productId: "MANUAL-" + Date.now(),
                     productName: oData.materialName,
-                    description: "Manual Entry",
+                    description: "Manual Entry from " + (oData.vendor || "Unknown Vendor"),
                     price: parseFloat(oData.price),
                     quantity: parseInt(oData.quantity),
                     costCenter: oData.costCenter,
+                    vendorId: oData.vendor || "Manual", // Use selected vendor
                     type: 'Manual'
-                });
+                }]);
 
-                oCartModel.setProperty("/items", aItems);
+                oCartModel.setProperty("/items", aNewItems);
+
+                // Update total
+                var fTotal = 0;
+                aNewItems.forEach(function (item) {
+                    fTotal += (parseFloat(item.price) * item.quantity);
+                });
+                oCartModel.setProperty("/total", fTotal.toFixed(2));
+
                 MessageToast.show("Added manual item to request.");
 
                 // Reset form
@@ -74,7 +85,8 @@ sap.ui.define([
                     materialName: "",
                     quantity: 1,
                     price: null,
-                    costCenter: ""
+                    costCenter: "",
+                    vendor: ""
                 });
             },
 
