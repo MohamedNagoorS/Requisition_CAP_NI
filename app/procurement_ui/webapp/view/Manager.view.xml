@@ -1,0 +1,49 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.Manager"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Page title="Manager Dashboard" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <Table id="requisitionTable" items="{/RequisitionHeader}" mode="None">
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Pending Requisitions" level="H2"/>
+                        <ToolbarSpacer/>
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column>
+                        <Text text="Requisition ID"/>
+                    </Column>
+                    <Column>
+                        <Text text="Requestor"/>
+                    </Column>
+                    <Column>
+                        <Text text="Total Value"/>
+                    </Column>
+                    <Column>
+                        <Text text="Status"/>
+                    </Column>
+                    <Column>
+                        <Text text="Actions"/>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{requisitionHeaderID}"/>
+                            <Text text="{requestor}"/>
+                            <ObjectNumber number="{totalValue}" unit="USD"/>
+                            <ObjectStatus text="{status}" state="{= ${status} === 'Accepted' ? 'Success' : ${status} === 'Rejected' ? 'Error' : 'Warning'}"/>
+                            <HBox>
+                                <Button text="Approve" type="Accept" press=".onApprove" enabled="{= ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Rejected'}" class="sapUiTinyMarginEnd"/>
+                                <Button text="Reject" type="Reject" press=".onReject" enabled="{= ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Rejected'}"/>
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
