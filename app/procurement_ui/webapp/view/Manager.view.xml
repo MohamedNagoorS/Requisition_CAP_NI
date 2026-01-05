@@ -5,7 +5,7 @@
     xmlns:core="sap.ui.core">
     <Page title="Manager Dashboard" showNavButton="true" navButtonPress=".onNavBack">
         <content>
-            <Table id="requisitionTable" items="{/RequisitionHeader}" mode="None">
+            <Table id="requisitionTable1" items="{/RequisitionHeader}" mode="None">
                 <headerToolbar>
                     <Toolbar>
                         <Title text="Pending Requisitions" level="H2"/>
