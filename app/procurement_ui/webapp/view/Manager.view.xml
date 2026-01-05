@@ -36,7 +36,7 @@
                             <Text text="{requestor}"/>
                             <ObjectNumber number="{totalValue}" unit="USD"/>
                             <ObjectStatus text="{status}" state="{= ${status} === 'Accepted' ? 'Success' : ${status} === 'Rejected' ? 'Error' : 'Warning'}"/>
-                            <HBox visible="{= ${status} !== 'Accepted' &amp;&amp; ${status} !== 'Rejected'}">
+                            <HBox visible="{path: 'status', formatter: '.isActionVisible'}">
                                 <Button text="Approve" type="Accept" press=".onApprove" class="sapUiTinyMarginEnd"/>
                                 <Button text="Reject" type="Reject" press=".onReject"/>
                             </HBox>
