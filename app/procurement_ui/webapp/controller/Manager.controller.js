@@ -7,7 +7,9 @@ sap.ui.define([
     "use strict";
 
     return Controller.extend("com.procurement.ui.controller.Manager", {
-        onInit: function () { },
+        onInit: function () {
+            console.log("Manager Controller Loaded");
+        },
 
         onNavBack: function () {
             var oRouter = UIComponent.getRouterFor(this);
@@ -23,32 +25,17 @@ sap.ui.define([
             var oContext = oEvent.getSource().getBindingContext();
             this._updateStatus(oContext, "Rejected");
         },
-        formatApprovalActionVisibility: function (sStatus) {
-            // Debug log to verify exact value received
-            console.log("Formatting visibility for status: '" + sStatus + "'");
 
-            if (!sStatus) {
-                return true; // Use default behavior (e.g. show) or false if you prefer
-            }
-
-            // Robust check: Trim whitespace and ignore case
-            var sClean = sStatus.trim().toLowerCase();
-
-            // Logic: Hide if Accepted or Rejected
-            if (sClean === "accepted" || sClean === "rejected") {
-                return false;
-            }
-
-            return true;
+        fmtStatus: function (sStatus) {
+            console.log("fmtStatus called with:", sStatus);
+            if (!sStatus) return true;
+            var sClean = sStatus.toString().trim().toLowerCase();
+            return sClean !== "accepted" && sClean !== "rejected";
         },
+
         _updateStatus: function (oContext, sStatus) {
-            // When this property updates, the XML Expression Binding will instantly re-evaluate 
-            // and hide the buttons because status is no longer 'Pending Approval'
             oContext.setProperty("status", sStatus);
             MessageToast.show("Requisition " + sStatus);
-
-            // Note: In a real app connected to a backend, you might need:
-            // oContext.getModel().submitChanges();
         }
     });
 });
