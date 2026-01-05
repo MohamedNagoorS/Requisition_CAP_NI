@@ -38,17 +38,16 @@
                             <ObjectStatus text="{status}" state="{= ${status} === 'Accepted' ? 'Success' : ${status} === 'Rejected' ? 'Error' : 'Warning'}"/>
                             <HBox>
                                 <Button 
-    text="Approve" 
-    type="Accept" 
-    press=".onApprove" 
-    visible="{= ${status} === 'Pending Approval' }" 
-    class="sapUiTinyMarginEnd"/>
-
-<Button 
-    text="Reject" 
-    type="Reject" 
-    press=".onReject" 
-    visible="{= ${status} === 'Pending Approval' }"/>
+                                    text="Approve" 
+                                    type="Accept" 
+                                    press=".onApprove" 
+                                    visible="{path: 'status', formatter: '.isActionVisible'}" 
+                                    class="sapUiTinyMarginEnd"/>
+                                <Button 
+                                    text="Reject" 
+                                    type="Reject" 
+                                    press=".onReject" 
+                                    visible="{path: 'status', formatter: '.isActionVisible'}"/>
                             </HBox>
                         </cells>
                     </ColumnListItem>

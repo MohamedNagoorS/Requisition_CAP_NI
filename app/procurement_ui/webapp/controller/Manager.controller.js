@@ -24,10 +24,9 @@ sap.ui.define([
             this._updateStatus(oContext, "Rejected");
         },
 
-        // DELETE THIS FUNCTION - It is replaced by XML Expression Binding
-        // isActionVisible: function (sStatus) {
-        //    return sStatus === "Pending Approval";
-        // },
+        isActionVisible: function (sStatus) {
+            return sStatus === "Pending Approval";
+        },
 
         _updateStatus: function (oContext, sStatus) {
             // Keep your existing update logic
