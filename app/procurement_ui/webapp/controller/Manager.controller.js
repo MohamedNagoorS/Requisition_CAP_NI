@@ -26,9 +26,6 @@ sap.ui.define([
             this._updateStatus(oContext, "Rejected");
         },
 
-        isActionVisible: function (sStatus) {
-            return sStatus !== "Accepted" && sStatus !== "Rejected";
-        },
 
         _updateStatus: function (oContext, sStatus) {
             var that = this;

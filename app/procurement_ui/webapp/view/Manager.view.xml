@@ -3,7 +3,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
-    <Page title="Manager Dashboard (Debug)" showNavButton="true" navButtonPress=".onNavBack">
+    <Page title="Manager Dashboard" showNavButton="true" navButtonPress=".onNavBack">
         <content>
             <Table id="requisitionTable1" items="{/RequisitionHeader}" mode="None">
                 <headerToolbar>
@@ -36,8 +36,6 @@
                             <Text text="{requestor}"/>
                             <ObjectNumber number="{totalValue}" unit="USD"/>
                             <ObjectStatus text="{status}" state="{= ${status} === 'Accepted' ? 'Success' : ${status} === 'Rejected' ? 'Error' : 'Warning'}"/>
-                            <!-- Debug Text -->
-                            <Text text="[{status}]" class="sapUiTinyMarginBeginEnd"/>
                             <HBox visible="{= ${status} === 'Pending Approval'}">
                                 <Button text="Approve" type="Accept" press=".onApprove" class="sapUiTinyMarginEnd"/>
                                 <Button text="Reject" type="Reject" press=".onReject"/>
