@@ -40,7 +40,7 @@
                                 text="{status}" 
                                 state="{= ${status} === 'Accepted' ? 'Success' : ${status} === 'Rejected' ? 'Error' : 'Warning'}"/>
                             
-                            <HBox visible="{path: 'status', formatter: '.formatApprovalActionVisibility'}">
+                            <HBox visible="{path: 'status', formatter: '.fmtStatus'}">
                                 <Button 
                                     text="Approve" 
                                     type="Accept" 
