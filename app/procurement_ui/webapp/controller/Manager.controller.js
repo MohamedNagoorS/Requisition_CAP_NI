@@ -23,20 +23,37 @@ sap.ui.define([
             var oContext = oEvent.getSource().getBindingContext();
             this._updateStatus(oContext, "Rejected");
         },
-
-        isActionVisible: function (sStatus) {
-            return sStatus === "Pending Approval";
+        isButtonVisible: function (sStatus) {
+            // Safety check: if status is empty, show buttons
+            if (!sStatus) return true;
+            
+            // Clean up the string and check values
+            var sCleanStatus = sStatus.trim(); 
+            return sCleanStatus !== "Accepted" && sCleanStatus !== "Rejected";
         },
 
+        // DELETED: isActionVisible is no longer needed.
+debugButtonVisibility: function (sStatus) {
+            // 1. Log the exact value to the Console
+            console.log("DEBUG: Row Status is ['" + sStatus + "']");
+
+            // 2. Handle null/undefined (show buttons by default if status is missing)
+            if (!sStatus) return true;
+
+            // 3. Check for specific values
+            if (sStatus === "Accepted" || sStatus === "Rejected") {
+                return false; // HIDE buttons
+            }
+            return true; // SHOW buttons
+        },
         _updateStatus: function (oContext, sStatus) {
-            // Keep your existing update logic
-            oContext.setProperty("status", sStatus).then(function () {
-                MessageToast.show("Requisition " + sStatus);
-            }).catch(function (oError) {
-                if (oError) {
-                    MessageBox.error("Error updating status: " + oError.message);
-                }
-            });
+            // When this property updates, the XML Expression Binding will instantly re-evaluate 
+            // and hide the buttons because status is no longer 'Pending Approval'
+            oContext.setProperty("status", sStatus);
+            MessageToast.show("Requisition " + sStatus);
+            
+            // Note: In a real app connected to a backend, you might need:
+            // oContext.getModel().submitChanges();
         }
     });
 });
