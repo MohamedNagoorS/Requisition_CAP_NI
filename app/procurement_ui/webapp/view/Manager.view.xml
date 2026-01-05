@@ -40,17 +40,17 @@
                                 text="{status}" 
                                 state="{= ${status} === 'Accepted' ? 'Success' : ${status} === 'Rejected' ? 'Error' : 'Warning'}"/>
                             
-<HBox visible="{= ${status} === 'Accepted' || ${status} === 'Rejected' ? false : true }">
-    <Button 
-        text="Approve" 
-        type="Accept" 
-        press=".onApprove" 
-        class="sapUiTinyMarginEnd"/>
-    <Button 
-        text="Reject" 
-        type="Reject" 
-        press=".onReject"/>
-</HBox>                        </cells>
+                            <HBox visible="{path: 'status', formatter: '.formatApprovalActionVisibility'}">
+                                <Button 
+                                    text="Approve" 
+                                    type="Accept" 
+                                    press=".onApprove" 
+                                    class="sapUiTinyMarginEnd"/>
+                                <Button 
+                                    text="Reject" 
+                                    type="Reject" 
+                                    press=".onReject"/>
+                            </HBox>                        </cells>
                     </ColumnListItem>
                 </items>
             </Table>
