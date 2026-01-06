@@ -9,7 +9,12 @@
         <content>
             <VBox class="sapUiMediumMargin">
                  <Title text="Requisition #{requisitionHeaderID}" level="H2"/>
-                 <ObjectStatus text="Status: {status}" state="{= ${status} === 'Pending Approval' ? 'Warning' : 'Information' }" class="sapUiSmallMarginBottom"/>
+                 <ObjectStatus 
+                    text="Status: {status}" 
+                    state="{path: 'status', formatter: '.formatter.formatStatusState'}" 
+                    icon="{path: 'status', formatter: '.formatter.formatStatusIcon'}"
+                    class="sapUiSmallMarginBottom"
+                 />
                  
                  <f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Header Details" columnsM="2" columnsL="2" columnsXL="2">
                     <f:content>

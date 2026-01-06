@@ -3,11 +3,14 @@ sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/core/routing/History",
     "sap/m/MessageBox",
-    "sap/m/MessageToast"
-], function (Controller, UIComponent, History, MessageBox, MessageToast) {
+    "sap/m/MessageToast",
+    "com/procurement/ui/model/formatter"
+], function (Controller, UIComponent, History, MessageBox, MessageToast, formatter) {
     "use strict";
 
     return Controller.extend("com.procurement.ui.controller.RequisitionList", {
+        formatter: formatter,
+
         onInit: function () {
         },
 

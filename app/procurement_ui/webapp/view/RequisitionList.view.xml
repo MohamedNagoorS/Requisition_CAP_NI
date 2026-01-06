@@ -39,7 +39,11 @@
                     <ColumnListItem type="Active">
                         <cells>
                             <ObjectIdentifier title="{requisitionHeaderID}"/>
-                            <ObjectStatus text="{status}" state="{= ${status} === 'Pending Approval' ? 'Warning' : (${status} === 'Created' ? 'Information' : 'Success') }"/>
+                            <ObjectStatus 
+                                text="{status}" 
+                                state="{path: 'status', formatter: '.formatter.formatStatusState'}" 
+                                icon="{path: 'status', formatter: '.formatter.formatStatusIcon'}"
+                            />
                             <ObjectNumber number="{
                                 parts: [{path: 'totalValue'}, {path: 'view>/currencyCode'}],
                                 type: 'sap.ui.model.type.Currency',

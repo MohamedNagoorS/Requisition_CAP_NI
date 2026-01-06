@@ -4,15 +4,18 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/routing/History",
     "sap/m/MessageToast",
-    "sap/m/MessageBox"
+    "sap/m/MessageBox",
+    "com/procurement/ui/model/formatter"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, UIComponent, JSONModel, History, MessageToast, MessageBox) {
+    function (Controller, UIComponent, JSONModel, History, MessageToast, MessageBox, formatter) {
         "use strict";
 
         return Controller.extend("com.procurement.ui.controller.PRDetails", {
+            formatter: formatter,
+
             onInit: function () {
                 var oRouter = UIComponent.getRouterFor(this);
                 oRouter.getRoute("RoutePRDetails").attachPatternMatched(this._onObjectMatched, this);
