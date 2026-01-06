@@ -69,9 +69,14 @@
                 </items>
             </Table>
             
-             <VBox class="sapUiMediumMargin">
-                 <Button text="Send for Approval" type="Accept" press=".onSendForApproval" enabled="{= ${status} === 'Created' }" width="100%"/>
-             </VBox>
         </content>
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button text="Generate PO" type="Emphasized" press=".onGeneratePO" enabled="{view>/isGPOEnabled}" visible="{= ${status} !== 'Created' }"/>
+                <Button text="Goods Issue" type="Accept" press=".onGoodsIssue" enabled="{view>/isGIEnabled}" visible="{= ${status} !== 'Created' }"/>
+                <Button text="Send for Approval" type="Default" press=".onSendForApproval" visible="{= ${status} === 'Created' }"/>
+            </OverflowToolbar>
+        </footer>
     </Page>
 </mvc:View>

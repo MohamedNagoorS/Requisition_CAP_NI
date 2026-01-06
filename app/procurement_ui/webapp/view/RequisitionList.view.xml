@@ -55,9 +55,6 @@
                             <Text text="{selectedVendor}"/>
                             <Text text="{createdAt}"/>
                             <HBox justifyContent="End" alignItems="Center">
-                                <Button text="Generate PO" type="Emphasized" class="sapUiTinyMarginEnd" press=".onGeneratePO" visible="{parts: [{path: 'status'}, {path: 'requisitionHeaderID'}, {path: 'ui>/stockStatus'}], formatter: '.isPOVisible'}"/>
-                                <Button text="Goods Issue" type="Accept" class="sapUiTinyMarginEnd" press=".onGoodsIssue" visible="{parts: [{path: 'status'}, {path: 'requisitionHeaderID'}, {path: 'ui>/stockStatus'}], formatter: '.isGoodsIssueVisible'}"/>
-                                
                                 <MenuButton icon="sap-icon://overflow" type="Transparent" tooltip="More actions">
                                     <menu>
                                         <Menu>
