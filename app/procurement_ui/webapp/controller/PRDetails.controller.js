@@ -50,42 +50,55 @@ sap.ui.define([
                 oContext.requestObject().then(function (oReq) {
                     var oViewModel = this.getView().getModel("view");
 
-                    // Default State: Disabled
+                    // Reset States
                     oViewModel.setProperty("/isGPOEnabled", false);
                     oViewModel.setProperty("/isGIEnabled", false);
 
-                    if (oReq.status === "Rejected" || oReq.status === "Created" || oReq.status === "Pending Approval") {
-                        // Keep disabled
-                        return;
-                    }
-
                     if (oReq.status === "Approved") {
-                        // Check Warehouse
+                        // Safe Default: Enable PO button immediately while we check stock
+                        // This prevents buttons from appearing disabled if the call is slow/fails
+                        oViewModel.setProperty("/isGPOEnabled", true);
+
+                        // Check Warehouse Stock
                         var oModel = this.getOwnerComponent().getModel();
                         var oBindList = oModel.bindList("/Warehouse");
 
                         oBindList.requestContexts().then(function (aWarehouseContexts) {
                             var aWarehouseItems = aWarehouseContexts.map(ctx => ctx.getObject());
                             var aReqItems = oReq.items || [];
-                            var bAllInStock = true;
+                            var bAllItemsInStock = true;
 
-                            if (aReqItems.length === 0) bAllInStock = false;
-
-                            aReqItems.forEach(function (reqItem) {
-                                var oStock = aWarehouseItems.find(w => w.productName === reqItem.materialName);
-                                if (!oStock || oStock.quantity < reqItem.quantity) {
-                                    bAllInStock = false;
-                                }
-                            });
-
-                            if (bAllInStock) {
-                                oViewModel.setProperty("/isGIEnabled", true);
+                            // If no items in requisition, logic is tricky. Let's assume out of stock.
+                            if (aReqItems.length === 0) {
+                                bAllItemsInStock = false;
                             } else {
+                                // Iterate items to verify stock
+                                aReqItems.forEach(function (reqItem) {
+                                    var oStock = aWarehouseItems.find(w => w.productName === reqItem.materialName);
+                                    // If item not found OR quantity insufficient -> OutOfStock
+                                    if (!oStock || oStock.quantity < reqItem.quantity) {
+                                        bAllItemsInStock = false;
+                                    }
+                                });
+                            }
+
+                            if (bAllItemsInStock && aReqItems.length > 0) {
+                                // Specific Case: All items found and sufficient quantity
+                                oViewModel.setProperty("/isGIEnabled", true);
+                                oViewModel.setProperty("/isGPOEnabled", false);
+                            } else {
+                                // Default Case: Out of Stock or Missing Item
+                                oViewModel.setProperty("/isGIEnabled", false);
                                 oViewModel.setProperty("/isGPOEnabled", true);
                             }
-                        }.bind(this));
+                        }.bind(this)).catch(function (oError) {
+                            console.error("Warehouse Check Failed", oError);
+                            // Stick to safe default (GPO enabled)
+                        });
                     }
-                }.bind(this));
+                }.bind(this)).catch(function (err) {
+                    console.error("Context request failed", err);
+                });
             },
 
             onGeneratePO: function () {
