@@ -36,7 +36,7 @@
                     <Column width="10rem" minScreenWidth="Desktop" demandPopin="true"><Text text="Total Value"/></Column>
                     <Column width="10rem" minScreenWidth="Tablet" demandPopin="true"><Text text="Vendor"/></Column>
                     <Column width="12rem" minScreenWidth="Tablet" demandPopin="true"><Text text="Created At"/></Column>
-                    <Column hAlign="End" width="16rem" minScreenWidth="Desktop" demandPopin="true"><Text text="Actions"/></Column>
+                    <Column hAlign="End" width="14rem" minScreenWidth="Desktop" demandPopin="true"><Text text="Actions"/></Column>
                 </columns>
                 <items>
                     <ColumnListItem type="Active">
