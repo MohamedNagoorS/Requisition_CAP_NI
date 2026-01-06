@@ -10,10 +10,21 @@ sap.ui.define([
 
     return Controller.extend("com.procurement.ui.controller.ManagerApprovals", {
         onInit: function () {
+            var oRouter = UIComponent.getRouterFor(this);
+            oRouter.getRoute("RouteManagerApprovals").attachPatternMatched(this._onObjectMatched, this);
+
             var oViewModel = new JSONModel({
                 currencyCode: "USD"
             });
             this.getView().setModel(oViewModel, "view");
+        },
+
+        _onObjectMatched: function () {
+            // Refresh the table binding to fetch latest data from DB
+            var oTable = this.byId("approvalTable");
+            if (oTable && oTable.getBinding("items")) {
+                oTable.getBinding("items").refresh();
+            }
         },
 
         onNavBack: function () {

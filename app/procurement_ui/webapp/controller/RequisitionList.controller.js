@@ -12,6 +12,16 @@ sap.ui.define([
         formatter: formatter,
 
         onInit: function () {
+            var oRouter = UIComponent.getRouterFor(this);
+            oRouter.getRoute("RouteRequisitionList").attachPatternMatched(this._onObjectMatched, this);
+        },
+
+        _onObjectMatched: function () {
+            // Refresh the table binding to fetch latest data from DB
+            var oTable = this.byId("requisitionTable");
+            if (oTable && oTable.getBinding("items")) {
+                oTable.getBinding("items").refresh();
+            }
         },
 
         onNavBack: function () {
