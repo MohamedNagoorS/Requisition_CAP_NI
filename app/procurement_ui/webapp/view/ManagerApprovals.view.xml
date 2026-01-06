@@ -1,0 +1,63 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.ManagerApprovals"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="Manager Approvals" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <Table
+                id="approvalTable"
+                inset="false"
+                items="{
+                    path: '/RequisitionHeader',
+                    filters: [
+                        {path: 'status', operator: 'EQ', value1: 'Pending Approval'}
+                    ],
+                    sorter: {
+                        path: 'createdAt',
+                        descending: true
+                    },
+                    parameters: {
+                        $count: true
+                    }
+                }"
+                class="sapUiResponsiveMargin"
+                width="auto">
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title text="Pending Requests" level="H2"/>
+                        <ToolbarSpacer/>
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column><Text text="Requisition ID"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Requestor"/></Column>
+                    <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Total Value"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Vendor"/></Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Created At"/></Column>
+                    <Column hAlign="End"><Text text="Actions"/></Column>
+                </columns>
+                <items>
+                    <ColumnListItem type="Active">
+                        <cells>
+                            <ObjectIdentifier title="{requisitionHeaderID}"/>
+                            <Text text="{requestor}"/>
+                            <ObjectNumber number="{
+                                parts: [{path: 'totalValue'}, {path: 'view>/currencyCode'}],
+                                type: 'sap.ui.model.type.Currency',
+                                formatOptions: { showMeasure: false }
+                            }" unit="USD" />
+                            <Text text="{selectedVendor}"/>
+                            <Text text="{createdAt}"/>
+                            <HBox justifyContent="End">
+                                <Button text="Approve" type="Accept" press=".onApprove" icon="sap-icon://accept" tooltip="Approve"/>
+                                <Button text="Reject" type="Reject" press=".onReject" icon="sap-icon://decline" class="sapUiTinyMarginBegin" tooltip="Reject"/>
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

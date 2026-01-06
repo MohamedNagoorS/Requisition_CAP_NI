@@ -135,6 +135,13 @@
                     "target": [
                         "TargetRequisitionList"
                     ]
+                },
+                {
+                    "name": "RouteManagerApprovals",
+                    "pattern": "managerApprovals",
+                    "target": [
+                        "TargetManagerApprovals"
+                    ]
                 }
             ],
             "targets": {
@@ -186,6 +193,13 @@
                     "clearControlAggregation": false,
                     "viewId": "RequisitionList",
                     "viewName": "RequisitionList"
+                },
+                "TargetManagerApprovals": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "ManagerApprovals",
+                    "viewName": "ManagerApprovals"
                 }
             }
         },
