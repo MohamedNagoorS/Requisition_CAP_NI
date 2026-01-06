@@ -54,28 +54,18 @@
                             }" unit="USD" />
                             <Text text="{selectedVendor}"/>
                             <Text text="{createdAt}"/>
-                            <OverflowToolbar design="Transparent" width="100%">
-                                <Button text="Generate PO" type="Emphasized" press=".onGeneratePO" class="sapUiTinyMarginEnd" visible="{parts: [{path: 'status'}, {path: 'requisitionHeaderID'}, {path: 'ui>/stockStatus'}], formatter: '.formatter.isPOVisible'}">
-                                    <layoutData>
-                                        <OverflowToolbarLayoutData priority="High"/>
-                                    </layoutData>
-                                </Button>
-                                <Button text="Goods Issue" type="Accept" press=".onGoodsIssue" class="sapUiTinyMarginEnd" visible="{parts: [{path: 'status'}, {path: 'requisitionHeaderID'}, {path: 'ui>/stockStatus'}], formatter: '.formatter.isGoodsIssueVisible'}">
-                                    <layoutData>
-                                        <OverflowToolbarLayoutData priority="High"/>
-                                    </layoutData>
-                                </Button>
-                                <Button icon="sap-icon://edit" press=".onEditRequisition" type="Transparent" tooltip="Edit">
-                                    <layoutData>
-                                        <OverflowToolbarLayoutData priority="Low"/>
-                                    </layoutData>
-                                </Button>
-                                <Button icon="sap-icon://delete" press=".onDeleteRequisition" type="Transparent" tooltip="Delete">
-                                    <layoutData>
-                                        <OverflowToolbarLayoutData priority="Disappear"/>
-                                    </layoutData>
-                                </Button>
-                            </OverflowToolbar>
+                            <HBox justifyContent="End" alignItems="Center">
+                                <Button text="Generate PO" type="Emphasized" class="sapUiTinyMarginEnd" press=".onGeneratePO" visible="{parts: [{path: 'status'}, {path: 'requisitionHeaderID'}, {path: 'ui>/stockStatus'}], formatter: '.formatter.isPOVisible'}"/>
+                                <Button text="Goods Issue" type="Accept" class="sapUiTinyMarginEnd" press=".onGoodsIssue" visible="{parts: [{path: 'status'}, {path: 'requisitionHeaderID'}, {path: 'ui>/stockStatus'}], formatter: '.formatter.isGoodsIssueVisible'}"/>
+                                <MenuButton icon="sap-icon://overflow" type="Transparent">
+                                    <menu>
+                                        <Menu>
+                                            <MenuItem text="Edit" icon="sap-icon://edit" press=".onEditRequisition"/>
+                                            <MenuItem text="Delete" icon="sap-icon://delete" press=".onDeleteRequisition"/>
+                                        </Menu>
+                                    </menu>
+                                </MenuButton>
+                            </HBox>
                         </cells>
                     </ColumnListItem>
                 </items>
