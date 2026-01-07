@@ -41,38 +41,16 @@ sap.ui.define([
 
         onApprove: function (oEvent) {
             var oContext = oEvent.getSource().getBindingContext();
-            this._updateStatus(oContext, "Approved");
+            oContext.setProperty("status", "Approved");
+            this.getView().getModel().submitBatch("auto");
+            MessageToast.show("Requisition Approved.");
         },
 
         onReject: function (oEvent) {
             var oContext = oEvent.getSource().getBindingContext();
-            this._updateStatus(oContext, "Rejected");
-        },
-
-        _updateStatus: function (oContext, sStatus) {
-            var sID = oContext.getProperty("requisitionHeaderID");
-
-            MessageBox.confirm("Are you sure you want to set status to " + sStatus + "?", {
-                onClose: function (sAction) {
-                    if (sAction === MessageBox.Action.OK) {
-                        oContext.setProperty("status", sStatus);
-                        // Submit batch if needed, but context.setProperty typically updates 
-                        // local binding and if auto-group is used, it flushes.
-                        // For safety, request refesh or submit.
-
-                        // We rely on the model to handle the patch.
-                        // If it fails, we should handle error.
-                        // Assuming V4 model with Update Group 'auto' or 'direct'.
-
-                        // Wait for potential sync
-                        oContext.getModel().submitBatch("auto").then(function () {
-                            MessageToast.show("Requisition " + sID + " has been " + sStatus + ".");
-                        }).catch(function (err) {
-                            MessageBox.error("Error updating status: " + err.message);
-                        });
-                    }
-                }
-            });
+            oContext.setProperty("status", "Rejected");
+            this.getView().getModel().submitBatch("auto");
+            MessageToast.show("Requisition Rejected.");
         }
     });
 });

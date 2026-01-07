@@ -20,6 +20,8 @@
                          $expand: 'items,supplier' 
                     }
                 }"
+                mode="SingleSelectMaster" 
+                selectionChange=".onPressRequisition"
                 updateFinished=".onUpdateFinished"
                 class="sapUiResponsiveMargin"
                 width="auto">
@@ -35,10 +37,10 @@
                     <Column width="10rem" minScreenWidth="Desktop" demandPopin="true"><Text text="Total Value"/></Column>
                     <Column width="10rem" minScreenWidth="Tablet" demandPopin="true"><Text text="Vendor"/></Column>
                     <Column width="12rem" minScreenWidth="Tablet" demandPopin="true"><Text text="Created At"/></Column>
-                    <Column width="5rem" minScreenWidth="Desktop" demandPopin="true"><Text text="Actions"/></Column>
+                    <!-- Actions column removed as we now use row selection -->
                 </columns>
                 <items>
-                    <ColumnListItem type="Active">
+                    <ColumnListItem type="Navigation">
                         <cells>
                             <ObjectIdentifier title="{requisitionHeaderID}"/>
                             <ObjectStatus 
@@ -53,16 +55,6 @@
                             }" unit="USD" />
                             <Text text="{supplier/name}"/>
                             <Text text="{createdAt}"/>
-                            <HBox justifyContent="End" alignItems="Center">
-                                <MenuButton icon="sap-icon://overflow" type="Transparent" tooltip="More actions">
-                                    <menu>
-                                        <Menu>
-                                            <MenuItem text="Edit" icon="sap-icon://edit" press=".onEditRequisition"/>
-                                            <MenuItem text="Delete" icon="sap-icon://delete" press=".onDeleteRequisition" enabled="{= ${status} !== 'Approved' }"/>
-                                        </Menu>
-                                    </menu>
-                                </MenuButton>
-                            </HBox>
                         </cells>
                     </ColumnListItem>
                 </items>

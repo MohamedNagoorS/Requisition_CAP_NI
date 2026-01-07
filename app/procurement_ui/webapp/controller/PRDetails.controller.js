@@ -282,9 +282,18 @@ sap.ui.define([
 
             onSendForApproval: function () {
                 var oContext = this.getView().getBindingContext();
-                oContext.setProperty("status", "Pending Approval");
+                var sID = oContext.getProperty("ID") || oContext.getProperty("requisitionHeaderID");
+
+                // Set Status to 'Pending' (Matches Manager Filter)
+                oContext.setProperty("status", "Pending");
+
+                // Submit Changes
                 this.getView().getModel().submitBatch("auto");
-                MessageBox.success("Requisition Sent for Approval!");
+
+                MessageToast.show("Requisition " + sID + " sent to Manager.");
+
+                // Navigate back to Home
+                this.getOwnerComponent().getRouter().navTo("RouteHome");
             }
         });
     }

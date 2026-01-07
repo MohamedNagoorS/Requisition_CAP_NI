@@ -12,7 +12,7 @@
                 items="{
                     path: '/RequisitionHeader',
                     filters: [
-                        {path: 'status', operator: 'EQ', value1: 'Pending Approval'}
+                        {path: 'status', operator: 'EQ', value1: 'Pending'}
                     ],
                     sorter: {
                         path: 'createdAt',
@@ -31,28 +31,24 @@
                     </OverflowToolbar>
                 </headerToolbar>
                 <columns>
-                    <Column><Text text="Requisition ID"/></Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Requestor"/></Column>
-                    <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Total Value"/></Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Vendor"/></Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Created At"/></Column>
-                    <Column hAlign="End"><Text text="Actions"/></Column>
+                    <Column><Text text="Requestor" /></Column>
+                    <Column><Text text="Total Value" /></Column>
+                    <Column hAlign="End"><Text text="Actions" /></Column>
                 </columns>
                 <items>
                     <ColumnListItem type="Active">
                         <cells>
-                            <ObjectIdentifier title="{requisitionHeaderID}"/>
-                            <Text text="{requestor}"/>
+                            <Text text="{requestor} (ID: {requisitionHeaderID})" />
                             <ObjectNumber number="{
                                 parts: [{path: 'totalValue'}, {path: 'view>/currencyCode'}],
                                 type: 'sap.ui.model.type.Currency',
                                 formatOptions: { showMeasure: false }
                             }" unit="USD" />
-                            <Text text="{selectedVendor}"/>
-                            <Text text="{createdAt}"/>
+                            
+                            <!-- Inline Actions -->
                             <HBox justifyContent="End">
-                                <Button text="Approve" type="Accept" press=".onApprove" icon="sap-icon://accept" tooltip="Approve"/>
-                                <Button text="Reject" type="Reject" press=".onReject" icon="sap-icon://decline" class="sapUiTinyMarginBegin" tooltip="Reject"/>
+                                <Button icon="sap-icon://accept" type="Accept" press=".onApprove" />
+                                <Button icon="sap-icon://decline" type="Reject" press=".onReject" class="sapUiTinyMarginBegin"/>
                             </HBox>
                         </cells>
                     </ColumnListItem>

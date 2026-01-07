@@ -48,56 +48,29 @@
                 </f:SimpleForm>
             </VBox>
 
-            <Table
-                id="itemsTable"
-                headerText="Items"
+            <Title text="Line Items" class="sapUiSmallMarginTop" />
+            <Table 
+                id="itemsTable" 
                 items="{
                     path: 'items',
-                     parameters : {
-                        $expand : 'header'
+                    parameters : {
+                        $expand : 'material'
                     }
                 }"
-                updateFinished=".onUpdateFinished"
-                class="sapUiResponsiveMargin"
-                width="auto">
+                width="auto"
+                class="sapUiResponsiveMargin">
                 <columns>
-                    <Column><Text text="Product Name"/></Column>
-                    <Column width="5rem"><Text text="Qty"/></Column>
-                    <Column width="8rem"><Text text="Price"/></Column>
-                    <Column><Text text="Cost Center"/></Column>
-                    <Column><Text text="Plant"/></Column>
+                    <Column><Text text="Material" /></Column>
+                    <Column><Text text="Quantity" /></Column>
+                    <Column><Text text="Price" /></Column>
                 </columns>
                 <items>
                     <ColumnListItem>
                         <cells>
-                            <!-- Material Selection Column -->
-                            <VBox>
-                                <CheckBox text="Manual?" selected="{ui>isManual}" select=".onCatalogModeToggle" />
-                                
-                                <!-- Catalog Mode: ComboBox -->
-                                <ComboBox items="{/Materials}" selectedKey="{material_ID}" placeholder="Select Material"
-                                    visible="{= !${ui>isManual} }"
-                                    selectionChange=".onMaterialSelect">
-                                    <core:Item key="{ID}" text="{description} ({ID})"/>
-                                </ComboBox>
-                                
-                                <!-- Manual Mode: Free Text -->
-                                <Input value="{materialDescription}" placeholder="Item Description" 
-                                    visible="{ui>isManual}" />
-                            </VBox>
-
-                            <Input value="{quantity}" type="Number" />
-                            
-                            <!-- Price: Read-Only in Catalog, Editable in Manual -->
-                            <Input value="{price}" type="Number" description="{view>/currencyCode}" fieldWidth="60%" 
-                                editable="{ui>isManual}" />
-                            
-                            <ComboBox items="{/CostCenters}" selectedKey="{costCenter_ID}" placeholder="Select CC">
-                                <core:Item key="{ID}" text="{description} ({ID})"/>
-                            </ComboBox>
-                            <ComboBox items="{/Plants}" selectedKey="{plant_ID}" placeholder="Select Plant">
-                                <core:Item key="{ID}" text="{name} ({ID})"/>
-                            </ComboBox>
+                            <!-- Displaying data from Association or Fallback -->
+                            <Text text="{= ${material/description} || ${materialDescription} }" /> 
+                            <Text text="{quantity}" />
+                            <Text text="{price}" />
                         </cells>
                     </ColumnListItem>
                 </items>
@@ -107,9 +80,12 @@
         <footer>
             <OverflowToolbar>
                 <ToolbarSpacer/>
-                <Button text="Generate PO" type="Emphasized" press=".onGeneratePO" enabled="{view>/isGPOEnabled}" visible="{= ${status} !== 'Created' }"/>
-                <Button text="Goods Issue" type="Accept" press=".onGoodsIssue" enabled="{view>/isGIEnabled}" visible="{= ${status} !== 'Created' }"/>
-                <Button text="Send for Approval" type="Default" press=".onSendForApproval" visible="{= ${status} === 'Created' }"/>
+                <!-- Actions -->
+                <Button text="Send for Approval" type="Emphasized" press=".onSendForApproval" visible="{= ${status} === 'Created' }"/>
+                <Button text="Generate PO" type="Accept" press=".onGeneratePO" enabled="{view>/isGPOEnabled}" visible="{= ${status} === 'Approved' }"/>
+                <Button text="Goods Issue" type="Accept" press=".onGoodsIssue" enabled="{view>/isGIEnabled}" visible="{= ${status} === 'Approved' }"/>
+                <Button text="Reject" type="Reject" press=".onReject" visible="{= ${status} === 'Pending' &amp;&amp; ${view>/isManager} }"/> 
+                <!-- Note: 'isManager' is hypothetical here, usually handled by view/controller logic. Keeping it simple. -->
             </OverflowToolbar>
         </footer>
     </Page>
