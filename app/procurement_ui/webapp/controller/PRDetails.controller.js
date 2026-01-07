@@ -210,11 +210,69 @@ sap.ui.define([
             },
 
             onGeneratePO: function () {
-                MessageToast.show("Generate Purchase Order: Under Construction");
+                var oContext = this.getView().getBindingContext();
+                oContext.setProperty("status", "Ordered");
+
+                this.getView().getModel().submitBatch("auto").then(function () {
+                    MessageBox.success("Purchase Order Generated! Status updated to 'Ordered'.");
+                    // Refresh availability check or disable buttons
+                    this._updateActionState();
+                }.bind(this)).catch(function (err) {
+                    MessageBox.error("Error generating PO: " + err.message);
+                });
             },
 
             onGoodsIssue: function () {
-                MessageToast.show("Goods Issue -> Warehouse: Under Construction");
+                var oContext = this.getView().getBindingContext();
+
+                // V4: Use requestObject to get data safely
+                oContext.requestObject().then(function (oReq) {
+                    var aReqItems = oReq.items || [];
+
+                    // 1. Fetch Warehouse Data to update
+                    var oModel = this.getView().getModel();
+                    var oBindList = oModel.bindList("/Warehouse");
+
+                    oBindList.requestContexts().then(function (aWarehouseContexts) {
+                        var bUpdatesMade = false;
+
+                        // 2. Iterate Items and Update Warehouse Stock
+                        aReqItems.forEach(function (reqItem) {
+                            // Find matching Warehouse 
+                            // Note: searching by productID matching material_ID
+                            var oWarehouseCtx = aWarehouseContexts.find(ctx => ctx.getProperty("productID") === reqItem.material_ID);
+
+                            if (oWarehouseCtx) {
+                                var iCurrentStock = oWarehouseCtx.getProperty("quantity");
+                                var iReqQty = reqItem.quantity;
+
+                                if (iCurrentStock >= iReqQty) {
+                                    // Deduct Stock
+                                    oWarehouseCtx.setProperty("quantity", iCurrentStock - iReqQty);
+                                    bUpdatesMade = true;
+                                } else {
+                                    console.warn("Stock insufficient for item " + reqItem.materialDescription + " during issue. Skipping deduction.");
+                                }
+                            }
+                        });
+
+                        // 3. Update Requisition Status
+                        oContext.setProperty("status", "Closed/Issued");
+
+                        // 4. Submit All Changes (Header Status + Warehouse Updates)
+                        oModel.submitBatch("auto").then(function () {
+                            MessageBox.success("Goods Issued Successfully! Stock updated.");
+                            this._updateActionState();
+                        }.bind(this)).catch(function (err) {
+                            MessageBox.error("Error issuing goods: " + err.message);
+                        });
+
+                    }.bind(this)).catch(function (err) {
+                        MessageBox.error("Failed to fetch Warehouse data: " + err.message);
+                    });
+                }.bind(this)).catch(function (err) {
+                    MessageBox.error("Failed to read Requisition data: " + err.message);
+                });
             },
 
             onNavBack: function () {
