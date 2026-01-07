@@ -64,54 +64,37 @@ sap.ui.define([
                 oContext.requestObject().then(function (oReq) {
                     var oViewModel = this.getView().getModel("view");
                     var oUiModel = this.getView().getModel("ui");
+                    var sStatus = oReq.status;
 
-                    // Reset States
+                    // 1. General Editability (Only 'Created' is editable)
+                    var bIsCreated = (sStatus === 'Created');
+                    oViewModel.setProperty("/isEditable", bIsCreated); // Controls ComboBoxes
+
+                    // 2. Button Visibility/Enablement
+                    oViewModel.setProperty("/isSendEnabled", bIsCreated); // Send for Approval: Only if Created
+
+                    // Manager Actions (Only if Pending)
+                    oViewModel.setProperty("/isManagerActionVisible", (sStatus === 'Pending'));
+
+                    // Default Operations States
                     oViewModel.setProperty("/isGPOEnabled", false);
                     oViewModel.setProperty("/isGIEnabled", false);
 
                     var aReqItems = oReq.items || [];
 
-                    // Initialize Row States (Catalog vs Manual)
-                    // We need to know the path for each item to set properties in the UI model.
-                    // Since specific paths might be tricky to guess without the list binding context, 
-                    // we might need to do this when the table updates or just iterate assuming standard paths?
-                    // Better: The Table binding "items" has contexts.
-                    // But here we just have the data object.
-
-                    // Alternative: The UI model structure can key by Item UUID.
-                    // ui>/items/<uuid>/isManual
-
+                    // Row States (Catalog vs Manual)
                     aReqItems.forEach(function (item) {
                         var bIsManual = !item.material_ID;
-                        // We need to map this to the UI model. 
-                        // Let's assume the View uses a relative binding to the UI model? 
-                        // No, the UI model is absolute {ui>isManual}, so it needs a path.
-                        // Actually, in the XML I used {ui>isManual} inside the row. 
-                        // This implies the row context should be EXTENDED with this model?
-                        // OR, more standard: The UI model has a property matching the binding path.
-
-                        // Let's try to set it by ID if possible, but the binding is tricky.
-                        // EASIEST FIX: Just rely on material_ID check in the XML expression?
-                        // CheckBox selected="{= !${material_ID} }" ?
-                        // But we want to toggle it live. A one-way expression binding won't carry user edits back to a state we can read easily.
-
-                        // Let's stick to the UI model but we need to run this logic AFTER the table has rows.
-                        // We can do it in the Table's 'updateFinished' event?
-                        // Or just modify the Data itself (transient property).
-                        // OData V4 allows client-side properties if defined in metadata? No.
-
-                        // Let's use the UI Model keyed by ID: /itemStates/<ID>/isManual
                         if (item.ID || item.requisitionItemID) {
                             var sKey = item.ID || item.requisitionItemID;
                             oUiModel.setProperty("/itemStates/" + sKey + "/isManual", bIsManual);
                         }
                     });
 
-                    if (oReq.status === "Approved") {
-                        // ... existing logic ...
-                        oViewModel.setProperty("/isGPOEnabled", true);
+                    if (sStatus === "Approved") {
+                        // Check Warehouse Stock Logic
+                        oViewModel.setProperty("/isGPOEnabled", true); // Default to GPO enabled for Approved
 
-                        // Check Warehouse Stock
                         var oModel = this.getOwnerComponent().getModel();
                         var oBindList = oModel.bindList("/Warehouse");
 
@@ -122,11 +105,8 @@ sap.ui.define([
                             if (aReqItems.length === 0) {
                                 bAllItemsInStock = false;
                             } else {
-                                // Iterate items to verify stock
                                 aReqItems.forEach(function (reqItem) {
-                                    // Use material_ID to match Warehouse productID
                                     var oStock = aWarehouseItems.find(w => w.productID === reqItem.material_ID);
-                                    // If item not found OR quantity insufficient -> OutOfStock
                                     if (!oStock || oStock.quantity < reqItem.quantity) {
                                         bAllItemsInStock = false;
                                     }
