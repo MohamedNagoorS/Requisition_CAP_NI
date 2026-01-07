@@ -100,7 +100,8 @@ sap.ui.define([
 
                     oData.items.push({
                         requisitionItemID: "ITEM-" + Date.now() + "-" + index,
-                        material_ID: sMaterialID, // Association
+                        material_ID: sMaterialID, // Association (might be defaulting to TG0011)
+                        materialDescription: item.productName || item.description, // Snapshot
                         quantity: item.quantity,
                         price: item.price,
                         costCenter_ID: sGlobalCostCenter || "33101101", // Default to Financials if empty

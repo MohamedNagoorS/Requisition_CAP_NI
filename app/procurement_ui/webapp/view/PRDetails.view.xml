@@ -49,6 +49,7 @@
             </VBox>
 
             <Table
+                id="itemsTable"
                 headerText="Items"
                 items="{
                     path: 'items',
@@ -56,6 +57,7 @@
                         $expand : 'header'
                     }
                 }"
+                updateFinished=".onUpdateFinished"
                 class="sapUiResponsiveMargin"
                 width="auto">
                 <columns>
@@ -68,11 +70,28 @@
                 <items>
                     <ColumnListItem>
                         <cells>
-                            <ComboBox items="{/Materials}" selectedKey="{material_ID}" placeholder="Select Material">
-                                <core:Item key="{ID}" text="{description} ({ID})"/>
-                            </ComboBox>
+                            <!-- Material Selection Column -->
+                            <VBox>
+                                <CheckBox text="Manual?" selected="{ui>isManual}" select=".onCatalogModeToggle" />
+                                
+                                <!-- Catalog Mode: ComboBox -->
+                                <ComboBox items="{/Materials}" selectedKey="{material_ID}" placeholder="Select Material"
+                                    visible="{= !${ui>isManual} }"
+                                    selectionChange=".onMaterialSelect">
+                                    <core:Item key="{ID}" text="{description} ({ID})"/>
+                                </ComboBox>
+                                
+                                <!-- Manual Mode: Free Text -->
+                                <Input value="{materialDescription}" placeholder="Item Description" 
+                                    visible="{ui>isManual}" />
+                            </VBox>
+
                             <Input value="{quantity}" type="Number" />
-                            <Input value="{price}" type="Number" description="{view>/currencyCode}" fieldWidth="60%" />
+                            
+                            <!-- Price: Read-Only in Catalog, Editable in Manual -->
+                            <Input value="{price}" type="Number" description="{view>/currencyCode}" fieldWidth="60%" 
+                                editable="{ui>isManual}" />
+                            
                             <ComboBox items="{/CostCenters}" selectedKey="{costCenter_ID}" placeholder="Select CC">
                                 <core:Item key="{ID}" text="{description} ({ID})"/>
                             </ComboBox>

@@ -67,6 +67,7 @@ entity RequisitionItem : cuid {
   
   // Master Data Associations
   material          : Association to Materials;
+  materialDescription : String(100); // Snapshot or Manual Description
   plant             : Association to Plants;
   costCenter        : Association to CostCenters;
   
