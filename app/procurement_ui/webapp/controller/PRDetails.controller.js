@@ -41,7 +41,7 @@ sap.ui.define([
                 this.getView().bindElement({
                     path: sPath,
                     parameters: {
-                        $expand: "items,items/material,items/plant,items/costCenter,supplier,purchaseGroup"
+                        $expand: "items,supplier,purchaseGroup"
                     },
                     events: {
                         dataReceived: function (oEvent) {
