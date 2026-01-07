@@ -59,7 +59,8 @@ sap.ui.define([
 
                             aReqItems.forEach(function (reqItem) {
                                 // Check if item exists in Warehouse and has enough quantity
-                                var oStock = aWarehouseItems.find(w => w.productName === reqItem.materialName);
+                                // Use material_ID (Foreign Key) to match Warehouse productID
+                                var oStock = aWarehouseItems.find(w => w.productID === reqItem.material_ID);
                                 if (!oStock || oStock.quantity < reqItem.quantity) {
                                     bAllInStock = false;
                                 }

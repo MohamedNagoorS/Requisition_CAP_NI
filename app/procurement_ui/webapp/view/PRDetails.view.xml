@@ -16,7 +16,7 @@
                     class="sapUiSmallMarginBottom"
                  />
                  
-                 <f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Header Details" columnsM="2" columnsL="2" columnsXL="2">
+                <f:SimpleForm editable="true" layout="ResponsiveGridLayout" title="Header Details" columnsM="2" columnsL="2" columnsXL="2">
                     <f:content>
                         <core:Title text="General Info" />
                         <Label text="Requestor"/>
@@ -25,8 +25,19 @@
                         <Text text="{createdAt}"/>
 
                         <core:Title text="Financials" />
-                        <Label text="Selected Vendor"/>
-                        <Text text="{selectedVendor}"/>
+                        <Label text="Supplier"/>
+                        <ComboBox items="{/Suppliers}" selectedKey="{supplier_ID}" placeholder="Select Supplier">
+                            <core:Item key="{ID}" text="{name} ({city})"/>
+                        </ComboBox>
+                        
+                        <Label text="Purchase Group"/>
+                        <ComboBox items="{/PurchaseGroups}" selectedKey="{purchaseGroup_ID}" placeholder="Select Group">
+                            <core:Item key="{ID}" text="{description} ({ID})"/>
+                        </ComboBox>
+
+                        <Label text="Company Code"/>
+                        <Input value="{companyCode}" editable="false" />
+
                         <Label text="Total Value"/>
                         <ObjectNumber number="{
                             parts: [{path: 'totalValue'}, {path: 'view>/currencyCode'}],
@@ -49,21 +60,25 @@
                 width="auto">
                 <columns>
                     <Column><Text text="Product Name"/></Column>
-                    <Column><Text text="Quantity"/></Column>
-                    <Column><Text text="Price"/></Column>
+                    <Column width="5rem"><Text text="Qty"/></Column>
+                    <Column width="8rem"><Text text="Price"/></Column>
                     <Column><Text text="Cost Center"/></Column>
+                    <Column><Text text="Plant"/></Column>
                 </columns>
                 <items>
                     <ColumnListItem>
                         <cells>
-                            <ObjectIdentifier title="{materialName}"/>
-                            <Text text="{quantity}"/>
-                             <ObjectNumber number="{
-                                parts: [{path: 'price'}, {path: 'view>/currencyCode'}],
-                                type: 'sap.ui.model.type.Currency',
-                                formatOptions: { showMeasure: false }
-                            }" unit="{view>/currencyCode}" />
-                            <Text text="{costCenter}"/>
+                            <ComboBox items="{/Materials}" selectedKey="{material_ID}" placeholder="Select Material">
+                                <core:Item key="{ID}" text="{description} ({ID})"/>
+                            </ComboBox>
+                            <Input value="{quantity}" type="Number" />
+                            <Input value="{price}" type="Number" description="{view>/currencyCode}" fieldWidth="60%" />
+                            <ComboBox items="{/CostCenters}" selectedKey="{costCenter_ID}" placeholder="Select CC">
+                                <core:Item key="{ID}" text="{description} ({ID})"/>
+                            </ComboBox>
+                            <ComboBox items="{/Plants}" selectedKey="{plant_ID}" placeholder="Select Plant">
+                                <core:Item key="{ID}" text="{name} ({ID})"/>
+                            </ComboBox>
                         </cells>
                     </ColumnListItem>
                 </items>

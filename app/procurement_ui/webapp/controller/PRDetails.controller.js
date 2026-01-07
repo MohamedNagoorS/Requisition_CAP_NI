@@ -34,7 +34,7 @@ sap.ui.define([
                 this.getView().bindElement({
                     path: sPath,
                     parameters: {
-                        $expand: "items"
+                        $expand: "items,items/material,items/plant,items/costCenter,supplier,purchaseGroup"
                     },
                     events: {
                         dataReceived: this._updateActionState.bind(this),
@@ -74,7 +74,8 @@ sap.ui.define([
                             } else {
                                 // Iterate items to verify stock
                                 aReqItems.forEach(function (reqItem) {
-                                    var oStock = aWarehouseItems.find(w => w.productName === reqItem.materialName);
+                                    // Use material_ID to match Warehouse productID
+                                    var oStock = aWarehouseItems.find(w => w.productID === reqItem.material_ID);
                                     // If item not found OR quantity insufficient -> OutOfStock
                                     if (!oStock || oStock.quantity < reqItem.quantity) {
                                         bAllItemsInStock = false;

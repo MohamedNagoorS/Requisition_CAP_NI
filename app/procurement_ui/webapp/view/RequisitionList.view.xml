@@ -17,7 +17,7 @@
                     ],
                     parameters: {
                         $count: true,
-                         $expand: 'items' 
+                         $expand: 'items,supplier' 
                     }
                 }"
                 updateFinished=".onUpdateFinished"
@@ -51,7 +51,7 @@
                                 type: 'sap.ui.model.type.Currency',
                                 formatOptions: { showMeasure: false }
                             }" unit="USD" />
-                            <Text text="{selectedVendor}"/>
+                            <Text text="{supplier/name}"/>
                             <Text text="{createdAt}"/>
                             <HBox justifyContent="End" alignItems="Center">
                                 <MenuButton icon="sap-icon://overflow" type="Transparent" tooltip="More actions">
