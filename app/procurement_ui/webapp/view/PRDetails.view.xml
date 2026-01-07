@@ -26,12 +26,12 @@
 
                         <core:Title text="Financials" />
                         <Label text="Supplier"/>
-                        <ComboBox items="{/Suppliers}" selectedKey="{supplier_ID}" placeholder="Select Supplier">
+                        <ComboBox items="{/Suppliers}" selectedKey="{supplier_ID}" placeholder="Select Supplier" editable="{= ${status} === 'Created' }">
                             <core:Item key="{ID}" text="{name} ({city})"/>
                         </ComboBox>
                         
                         <Label text="Purchase Group"/>
-                        <ComboBox items="{/PurchaseGroups}" selectedKey="{purchaseGroup_ID}" placeholder="Select Group">
+                        <ComboBox items="{/PurchaseGroups}" selectedKey="{purchaseGroup_ID}" placeholder="Select Group" editable="{= ${status} === 'Created' }">
                             <core:Item key="{ID}" text="{description} ({ID})"/>
                         </ComboBox>
 
@@ -81,7 +81,7 @@
             <OverflowToolbar>
                 <ToolbarSpacer/>
                 <!-- Actions -->
-                <Button text="Send for Approval" type="Emphasized" press=".onSendForApproval" visible="{= ${status} === 'Created' }"/>
+                <Button text="Send for Approval" type="Emphasized" press=".onSendForApproval" visible="{= ${status} === 'Created' }" enabled="{= ${status} === 'Created' }"/>
                 <Button text="Generate PO" type="Accept" press=".onGeneratePO" enabled="{view>/isGPOEnabled}" visible="{= ${status} === 'Approved' }"/>
                 <Button text="Goods Issue" type="Accept" press=".onGoodsIssue" enabled="{view>/isGIEnabled}" visible="{= ${status} === 'Approved' }"/>
                 <Button text="Reject" type="Reject" press=".onReject" visible="{= ${status} === 'Pending' &amp;&amp; ${view>/isManager} }"/> 

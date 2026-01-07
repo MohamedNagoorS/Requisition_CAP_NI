@@ -20,7 +20,8 @@ sap.ui.define([
                     currency: "USD",
                     manualDescription: "",
                     selectedVendorID: "",
-                    selectedMaterialID: null
+                    selectedMaterialID: null,
+                    selectedCostCenterID: null
                 });
                 this.getView().setModel(oViewModel, "view");
             },
@@ -34,6 +35,7 @@ sap.ui.define([
                 oModel.setProperty("/manualDescription", "");
                 oModel.setProperty("/selectedVendorID", "");
                 oModel.setProperty("/selectedMaterialID", null);
+                oModel.setProperty("/selectedCostCenterID", null);
 
                 var oCombo = this.byId("materialCombo");
                 if (oCombo) oCombo.setSelectedKey(null);
@@ -87,6 +89,7 @@ sap.ui.define([
                 var fPrice = oModel.getProperty("/price");
                 var iQty = oModel.getProperty("/quantity");
                 var sVendor = oModel.getProperty("/selectedVendorID");
+                var sCostCenter = oModel.getProperty("/selectedCostCenterID");
 
                 // Validation
                 if (sMode === 'catalog' && !sMaterialID) {
@@ -99,6 +102,10 @@ sap.ui.define([
                 }
                 if (!iQty || iQty <= 0) {
                     MessageToast.show("Quantity must be greater than 0.");
+                    return;
+                }
+                if (!sCostCenter) {
+                    MessageToast.show("Please select a Cost Center.");
                     return;
                 }
 
@@ -132,7 +139,7 @@ sap.ui.define([
                     description: (sMode === 'manual' ? "Manual Entry: " : "Catalog Item: ") + sDisplayDesc,
                     price: parseFloat(fPrice),
                     quantity: parseInt(iQty),
-                    costCenter: "",
+                    costCenter: sCostCenter,
                     vendorId: sVendor || "33300002",
                     type: sMode === 'manual' ? 'Manual' : 'Catalog',
                     material_ID: sMaterialID

@@ -91,13 +91,14 @@
                                 <core:Item key="{ID}" text="{name} - {city}" />
                             </ComboBox>
 
-                            <!-- COST CENTER (Required for Manual) -->
-                            <Label text="Cost Center" required="{= ${view>/procurementMode} === 'manual' }" />
+                            <!-- COST CENTER (Required) -->
+                            <Label text="Cost Center" required="true" />
                             <ComboBox 
+                                id="costCenterCombo"
+                                selectedKey="{view>/selectedCostCenterID}"
                                 items="{/CostCenters}"
-                                visible="{= ${view>/procurementMode} === 'manual' }"
                                 placeholder="Select Cost Center">
-                                <core:Item key="{ID}" text="{description}" />
+                                <core:Item key="{ID}" text="{description} ({ID})" />
                             </ComboBox>
 
                         </f:content>

@@ -10,15 +10,6 @@
              <Button icon="sap-icon://cart" text="{= ${cart>/items}.length }" enabled="false"/>
         </headerContent>
         <content>
-            <VBox class="sapUiMediumMargin">
-                 <f:SimpleForm editable="true" layout="ResponsiveGridLayout" title="Requisition Details">
-                    <f:content>
-                        <Label text="Global Cost Center" required="true"/>
-                        <Input value="{view>/globalCostCenter}" placeholder="e.g., CC-GLOBAL-001" change=".onCostCenterChange"/>
-                    </f:content>
-                </f:SimpleForm>
-            </VBox>
-
             <List
                 headerText="Items in Cart"
                 items="{
@@ -42,7 +33,7 @@
                         <attributes>
                             <ObjectAttribute text="Quantity: {cart>quantity}"/>
                             <ObjectAttribute text="Total: {= ${cart>price} * ${cart>quantity} } {view>/currencyCode}"/>
-                            <ObjectAttribute text="Cost Center: {= ${cart>costCenter} ? ${cart>costCenter} : ${view>/globalCostCenter} }"/>
+                            <ObjectAttribute text="Cost Center: {cart>costCenter}"/>
                         </attributes>
                     </ObjectListItem>
                 </items>

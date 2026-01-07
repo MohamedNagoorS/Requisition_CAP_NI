@@ -64,14 +64,14 @@ sap.ui.define([
                 var oCartModel = this.getOwnerComponent().getModel("cart");
                 var aItems = oCartModel.getProperty("/items");
                 var fTotal = oCartModel.getProperty("/total");
-                var sGlobalCostCenter = this.getView().getModel("view").getProperty("/globalCostCenter");
-
                 if (aItems.length === 0) return;
 
-                if (!sGlobalCostCenter) {
-                    MessageToast.show("Please enter a Global Cost Center.");
-                    return;
-                }
+                // Validation: ensure all items have a cost center (should be caught at entry)
+                // but good to check.
+                /* 
+                var bMissingCC = aItems.some(item => !item.costCenter);
+                if (bMissingCC) { ... } 
+                */
 
                 var oModel = this.getView().getModel(); // OData V4 Model
                 var oListBinding = oModel.bindList("/RequisitionHeader");
@@ -103,7 +103,7 @@ sap.ui.define([
                         materialDescription: item.productName || item.description, // Snapshot
                         quantity: item.quantity,
                         price: item.price,
-                        costCenter_ID: sGlobalCostCenter || "33101101", // Default to Financials if empty
+                        costCenter_ID: item.costCenter || "33101101", // Default to Financials if empty but it should be set
                         plant_ID: "3310", // Default Plant
                         IsActiveEntity: true
                     });
