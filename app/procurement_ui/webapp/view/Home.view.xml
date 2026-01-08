@@ -44,9 +44,7 @@
                             </VBox>
                         </f:content>
                     </f:Card>
-                            </VBox>
-                        </f:content>
-                    </f:Card>
+
                 </HBox>
             </VBox>
         </content>
