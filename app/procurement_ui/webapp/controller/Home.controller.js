@@ -26,7 +26,11 @@ sap.ui.define([
 
             onPressManager: function () {
                 var oRouter = UIComponent.getRouterFor(this);
+<<<<<<< HEAD
                 oRouter.navTo("RouteManagerApprovals");
+=======
+                oRouter.navTo("RouteManager");
+>>>>>>> d2db9ecec3abd47b1ef9a031c27c1965d91b6c23
             }
         });
     }

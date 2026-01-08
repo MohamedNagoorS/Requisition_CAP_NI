@@ -33,6 +33,7 @@
                             </VBox>
                         </f:content>
                     </f:Card>
+<<<<<<< HEAD
                     <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressManager" semanticRole="ListItem">
                         <f:header>
                             <card:Header title="Manager Approval" subtitle="Review pending requests" iconSrc="sap-icon://manager"/>
@@ -41,6 +42,17 @@
                             <VBox class="sapUiSmallMargin">
                                 <Text text="Approve or reject pending purchase requisitions."/>
                                 <Button text="Go to Approvals" type="Emphasized" press=".onPressManager" class="sapUiSmallMarginTop" width="100%"/>
+=======
+
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressManager" semanticRole="ListItem">
+                        <f:header>
+                            <card:Header title="Manager Dashboard" subtitle="Approve or Reject Requisitions" iconSrc="sap-icon://manager"/>
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiSmallMargin">
+                                <Text text="Review pending requisitions and take action."/>
+                                <Button text="Go to Dashboard" type="Emphasized" press=".onPressManager" class="sapUiSmallMarginTop" width="100%"/>
+>>>>>>> d2db9ecec3abd47b1ef9a031c27c1965d91b6c23
                             </VBox>
                         </f:content>
                     </f:Card>

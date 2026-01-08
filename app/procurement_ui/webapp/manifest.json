@@ -36,7 +36,7 @@
         }
     },
     "sap.ui5": {
-        "flexEnabled": true,
+        "flexEnabled": false,
         "dependencies": {
             "minUI5Version": "1.108.0",
             "libs": {
@@ -137,10 +137,17 @@
                     ]
                 },
                 {
+<<<<<<< HEAD
                     "name": "RouteManagerApprovals",
                     "pattern": "managerApprovals",
                     "target": [
                         "TargetManagerApprovals"
+=======
+                    "name": "RouteManager",
+                    "pattern": "manager",
+                    "target": [
+                        "TargetManager"
+>>>>>>> d2db9ecec3abd47b1ef9a031c27c1965d91b6c23
                     ]
                 }
             ],
@@ -194,12 +201,21 @@
                     "viewId": "RequisitionList",
                     "viewName": "RequisitionList"
                 },
+<<<<<<< HEAD
                 "TargetManagerApprovals": {
                     "viewType": "XML",
                     "transition": "slide",
                     "clearControlAggregation": false,
                     "viewId": "ManagerApprovals",
                     "viewName": "ManagerApprovals"
+=======
+                "TargetManager": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "Manager",
+                    "viewName": "Manager"
+>>>>>>> d2db9ecec3abd47b1ef9a031c27c1965d91b6c23
                 }
             }
         },
