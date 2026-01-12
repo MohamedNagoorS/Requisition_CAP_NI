@@ -725,9 +725,10 @@ sap.ui.define([
                         }
                     });
 
-                    finalY = doc.lastAutoTable.finalY;
+                    finalY = doc.lastAutoTable.finalY + 10;
 
-                    // Totals Box
+                    /*
+                    // Totals Box - Removed per user request
                     doc.autoTable({
                         startY: finalY, // attach to bottom
                         head: [['PIECES']],
@@ -747,6 +748,7 @@ sap.ui.define([
                         tableWidth: 40, // Reduced width since fewer columns
                         margin: { left: 108 }
                     });
+                    */
 
                     // Save
                     doc.save("GoodsReceipt_" + sPOID + ".pdf");
