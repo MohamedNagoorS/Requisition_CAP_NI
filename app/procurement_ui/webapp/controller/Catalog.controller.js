@@ -84,6 +84,13 @@ sap.ui.define([
 
                 var aItems = oCartModel.getProperty("/items") || [];
 
+                // Map Vendor ID to real DB ID
+                var sRealVendorID = this.sCurrentVendorId === "A" ? "SUP001" : "SUP002";
+                if (this.sCurrentVendorId !== "A" && this.sCurrentVendorId !== "B") {
+                    // Fallback or if passed directly
+                    sRealVendorID = this.sCurrentVendorId;
+                }
+
                 // Add to cart (create new array reference to ensure reactivity)
                 var aNewItems = aItems.concat([{
                     productId: oItem.vendorCatalogAID || oItem.vendorCatalogBID || oItem.ID,
@@ -92,7 +99,7 @@ sap.ui.define([
                     price: oItem.unitPrice,
                     quantity: 1, // Default 1
                     costCenter: "", // Initialize cost center
-                    vendorId: this.sCurrentVendorId,
+                    vendorId: sRealVendorID,
                     type: 'Catalog'
                 }]);
 
