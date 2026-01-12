@@ -76,14 +76,16 @@ sap.ui.define([
                 var oModel = this.getView().getModel(); // OData V4 Model
                 var oListBinding = oModel.bindList("/RequisitionHeader");
 
+                // Get Vendor ID from first item (assuming single vendor per PR for now)
+                var sSupplierID = aItems[0].vendorId || "SUP003"; // Default for manual if missing
+
                 var oData = {
                     requisitionHeaderID: "PR-" + Date.now(), // Generate a unique ID
                     requestor: "Employee User", // Mock user
                     requestType: aItems[0].type || "Standard",
                     status: "Created", // Initial Status
                     totalValue: fTotal,
-                    // selectedVendor: REMOVED. Map to a default supplier for now since cart doesn't have ID.
-                    supplier_ID: "33300002", // Default to "Domestic UAE Supplier 2" for demo
+                    supplier_ID: sSupplierID,
                     purchaseGroup_ID: "003", // Default Group
                     companyCode: "3310",     // Default Company
                     IsActiveEntity: true, // Required for draft-enabled entities
