@@ -106,14 +106,16 @@ sap.ui.define([
                                 bAllItemsInStock = false;
                             } else {
                                 aReqItems.forEach(function (reqItem) {
+                                    // Resolve Material ID from property or expanded object
+                                    var sReqMatID = reqItem.material_ID || (reqItem.material && reqItem.material.ID);
+
                                     // Manual items (no ID) cannot be issued from warehouse
-                                    if (!reqItem.material_ID) {
+                                    if (!sReqMatID) {
                                         console.log("Item is manual or missing material_ID, cannot issue goods:", reqItem);
                                         bAllItemsInStock = false;
                                         return;
                                     }
 
-                                    var sReqMatID = reqItem.material_ID;
                                     var oStock = aWarehouseItems.find(w => w.productID === sReqMatID);
 
                                     console.log("Checking Stock for:", sReqMatID, "Found:", oStock);
