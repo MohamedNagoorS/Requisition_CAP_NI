@@ -522,7 +522,8 @@ sap.ui.define([
 
                         // 2. Iterate Items and Update Warehouse Stock
                         aReqItems.forEach(function (reqItem) {
-                            var sMaterialID = reqItem.material_ID;
+                            // Robust ID retrieval: check direct property or nested object
+                            var sMaterialID = reqItem.material_ID || (reqItem.material && reqItem.material.ID);
                             console.log("Processing Item:", reqItem.materialDescription, "ID:", sMaterialID);
 
                             // Find matching Warehouse 
