@@ -509,26 +509,43 @@ sap.ui.define([
                 oContext.requestObject().then(function (oReq) {
                     var aReqItems = oReq.items || [];
                     var sPOID = oReq.requisitionHeaderID; // PO Number for PDF
+                    console.log("Goods Issue: Items in PR:", aReqItems);
 
                     // 1. Fetch Warehouse Data to update
                     var oModel = this.getView().getModel();
                     var oBindList = oModel.bindList("/Warehouse");
 
-                    oBindList.requestContexts().then(function (aWarehouseContexts) {
+                    // Fetch up to 100 items
+                    oBindList.requestContexts(0, 100).then(function (aWarehouseContexts) {
                         var bUpdatesMade = false;
                         var aPDFItems = []; // Collect data for PDF
 
+                        console.log("Goods Issue: Warehouse Contexts Loaded:", aWarehouseContexts.length);
+                        // Log loaded IDs for debugging
+                        var aLoadedIDs = aWarehouseContexts.map(c => c.getProperty("productID"));
+                        console.log("Warehouse IDs:", aLoadedIDs);
+
                         // 2. Iterate Items and Update Warehouse Stock
                         aReqItems.forEach(function (reqItem) {
+                            // Robust ID retrieval: check direct property or nested object
+                            var sMaterialID = reqItem.material_ID || (reqItem.material && reqItem.material.ID);
+                            console.log("Processing Item:", reqItem.materialDescription, "ID:", sMaterialID);
+
                             // Find matching Warehouse 
                             // Note: searching by productID matching material_ID
-                            var oWarehouseCtx = aWarehouseContexts.find(ctx => ctx.getProperty("productID") === reqItem.material_ID);
+                            var oWarehouseCtx = aWarehouseContexts.find(function (ctx) {
+                                var sProdID = ctx.getProperty("productID");
+                                // Loose comparison in case of type mismatch (though both should be strings)
+                                return sProdID == sMaterialID;
+                            });
+
                             var sLocation = "";
 
                             if (oWarehouseCtx) {
                                 var iCurrentStock = oWarehouseCtx.getProperty("quantity");
                                 var iReqQty = reqItem.quantity;
-                                sLocation = oWarehouseCtx.getProperty("location") || ""; // Get Location for PDF
+                                sLocation = oWarehouseCtx.getProperty("location");
+                                console.log("Found Warehouse Match! Location:", sLocation, "Stock:", iCurrentStock);
 
                                 if (iCurrentStock >= iReqQty) {
                                     // Deduct Stock
@@ -537,6 +554,8 @@ sap.ui.define([
                                 } else {
                                     console.warn("Stock insufficient for item " + reqItem.materialDescription + " during issue. Skipping deduction.");
                                 }
+                            } else {
+                                console.warn("No Warehouse entry found for Product ID:", sMaterialID);
                             }
 
                             // Prepare Item Data for PDF
@@ -544,10 +563,7 @@ sap.ui.define([
                                 qty: reqItem.quantity,
                                 po: sPOID,
                                 description: reqItem.materialDescription,
-                                weight: "", // Not available
-                                volumen: "", // Not available
-                                volWeight: "", // Not available
-                                location: sLocation
+                                location: sLocation || "N/A" // Fallback
                             });
                         });
 
@@ -710,9 +726,10 @@ sap.ui.define([
                         }
                     });
 
-                    finalY = doc.lastAutoTable.finalY;
+                    finalY = doc.lastAutoTable.finalY + 10;
 
-                    // Totals Box
+                    /*
+                    // Totals Box - Removed per user request
                     doc.autoTable({
                         startY: finalY, // attach to bottom
                         head: [['PIECES']],
@@ -732,6 +749,7 @@ sap.ui.define([
                         tableWidth: 40, // Reduced width since fewer columns
                         margin: { left: 108 }
                     });
+                    */
 
                     // Save
                     doc.save("GoodsReceipt_" + sPOID + ".pdf");
