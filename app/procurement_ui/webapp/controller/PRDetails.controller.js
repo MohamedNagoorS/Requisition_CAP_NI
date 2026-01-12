@@ -106,9 +106,10 @@ sap.ui.define([
                                 bAllItemsInStock = false;
                             } else {
                                 aReqItems.forEach(function (reqItem) {
-                                    // Skip check for manual items or if no material ID
+                                    // Manual items (no ID) cannot be issued from warehouse
                                     if (!reqItem.material_ID) {
-                                        console.log("Item is manual or missing material_ID, skipping stock check:", reqItem);
+                                        console.log("Item is manual or missing material_ID, cannot issue goods:", reqItem);
+                                        bAllItemsInStock = false;
                                         return;
                                     }
 
