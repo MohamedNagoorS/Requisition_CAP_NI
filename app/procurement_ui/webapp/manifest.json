@@ -142,6 +142,13 @@
                     "target": [
                         "TargetManagerApprovals"
                     ]
+                },
+                {
+                    "name": "RouteAdmin",
+                    "pattern": "admin",
+                    "target": [
+                        "TargetAdmin"
+                    ]
                 }
             ],
             "targets": {
@@ -200,6 +207,13 @@
                     "clearControlAggregation": false,
                     "viewId": "ManagerApprovals",
                     "viewName": "ManagerApprovals"
+                },
+                "TargetAdmin": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "Admin",
+                    "viewName": "Admin"
                 }
             }
         },

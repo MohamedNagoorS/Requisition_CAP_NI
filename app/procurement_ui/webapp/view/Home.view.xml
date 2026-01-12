@@ -44,6 +44,17 @@
                             </VBox>
                         </f:content>
                     </f:Card>
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressAdmin" semanticRole="ListItem">
+                        <f:header>
+                            <card:Header title="Admin Panel" subtitle="Data Cleanup" iconSrc="sap-icon://action-settings"/>
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiSmallMargin">
+                                <Text text="Delete requisitions and manage test data."/>
+                                <Button text="Manage Data" type="Reject" press=".onPressAdmin" class="sapUiSmallMarginTop" width="100%"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
 
                 </HBox>
             </VBox>

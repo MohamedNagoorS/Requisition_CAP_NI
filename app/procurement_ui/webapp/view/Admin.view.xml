@@ -1,0 +1,53 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.Admin"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="Admin Panel: Data Cleanup" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <Table 
+                id="adminTable"
+                items="{
+                    path: '/RequisitionHeader',
+                    parameters: {
+                        $expand: 'items,supplier'
+                    },
+                    sorter: {
+                        path: 'createdAt',
+                        descending: true
+                    }
+                }"
+                mode="Delete"
+                delete=".onDeleteRequisition">
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="All Requisitions" level="H2"/>
+                        <ToolbarSpacer/>
+                        <Button text="Delete All" type="Reject" press=".onDeleteAll" icon="sap-icon://delete"/>
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column><Text text="ID" /></Column>
+                    <Column><Text text="Requestor" /></Column>
+                    <Column><Text text="Status" /></Column>
+                    <Column><Text text="Created At" /></Column>
+                    <Column><Text text="Total Value" /></Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{requisitionHeaderID}" />
+                            <Text text="{requestor}" />
+                            <ObjectStatus 
+                                text="{status}"
+                                state="{path: 'status', formatter: '.formatter.formatStatusState'}" />
+                            <Text text="{createdAt}" />
+                            <ObjectNumber number="{totalValue}" unit="{currencyCode}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
