@@ -214,250 +214,291 @@ sap.ui.define([
             },
 
             onGeneratePO: function () {
-                var oContext = this.getView().getBindingContext();
+                var oView = this.getView();
+                var oContext = oView.getBindingContext();
                 var sID = oContext.getProperty("ID");
                 var sDisplayID = oContext.getProperty("requisitionHeaderID") || "PO-" + sID.substring(0, 8);
 
-                // Use requestObject to safely get the full data tree including expansions
-                oContext.requestObject().then(function (oReq) {
+                // 1. Get Header Data via Property Binding (Primitives) to avoid V4 errors
+                var sRequestor = oContext.getProperty("requestor");
+                var sCompanyCode = oContext.getProperty("companyCode");
+                var sSupplierName = oContext.getProperty("supplier/name");
+                var sSupplierCity = oContext.getProperty("supplier/city");
 
-                    // Update Status first
-                    oContext.setProperty("status", "Ordered");
-                    this.getView().getModel().submitBatch("auto");
+                // Fallback if direct expansion property fails (e.g. if binding is weird)
+                if (!sSupplierName) {
+                    // Try to get from ComboBox if it's there
+                    var oSupplierCombo = this.byId("supplierCombo"); // Assuming ID, but view didn't have ID. 
+                    // View has: <ComboBox items="{/Suppliers}" selectedKey="{supplier_ID}" ...>
+                    // Let's try to find the selected item from the binding context of the supplier relation if possible
+                    // Or just default to "Unknown"
+                    sSupplierName = "Unknown Vendor";
+                    sSupplierCity = "Unknown City";
+                }
 
-                    // Generate PDF
-                    try {
-                        const { jsPDF } = window.jspdf;
-                        if (!jsPDF) {
-                            MessageBox.error("jsPDF library not loaded. Please check internet connection.");
-                            return;
-                        }
+                var oReq = {
+                    requestor: sRequestor,
+                    companyCode: sCompanyCode,
+                    supplier: {
+                        name: sSupplierName,
+                        city: sSupplierCity
+                    }
+                };
 
-                        var doc = new jsPDF();
-
-                        // Colors
-                        var primaryColor = [0, 166, 81]; // Green #00A651
-                        var secondaryColor = [0, 128, 0];
-                        var blackColor = [0, 0, 0];
-
-                        // --- HEADER ---
-                        doc.setFillColor(...primaryColor);
-                        doc.setTextColor(...primaryColor);
-                        doc.setFontSize(22);
-                        doc.setFont("helvetica", "bold");
-                        doc.text("GimBooks", 15, 25);
-
-                        // Right Side Header
-                        doc.setTextColor(...primaryColor);
-                        doc.setFontSize(24);
-                        doc.text("PURCHASE ORDER", 200, 20, { align: "right" });
-
-                        doc.setTextColor(...blackColor); // Black
-                        doc.setFontSize(10);
-                        doc.setFont("helvetica", "normal");
-                        var sDate = new Date().toLocaleDateString();
-                        doc.text("DATE", 160, 30);
-                        doc.text(sDate, 200, 30, { align: "right" });
-                        doc.text("PO #", 160, 35);
-                        doc.text(sDisplayID, 200, 35, { align: "right" });
-
-                        // --- COMPANY INFO (Top Left) ---
-                        doc.setFontSize(9);
-                        doc.setTextColor(...blackColor);
-                        var iY = 35;
-                        doc.text("GimBooks Inc.", 15, iY += 5);
-                        doc.text("1234 Innovation Drive", 15, iY += 5);
-                        doc.text("Tech City, TC 90210", 15, iY += 5);
-                        doc.text("Phone: (555) 123-4567", 15, iY += 5);
-                        doc.text("Website: www.gimbooks.com", 15, iY += 5);
-
-                        // --- VENDOR & SHIP TO SECTIONS ---
-                        var iSectionY = 70;
-                        var iCol2X = 110;
-
-                        // Headers
-                        doc.setFillColor(...primaryColor);
-                        doc.rect(15, iSectionY, 80, 7, 'F'); // Vendor Box
-                        doc.rect(iCol2X, iSectionY, 80, 7, 'F'); // Ship To Box
-
-                        doc.setTextColor(255, 255, 255); // White
-                        doc.setFont("helvetica", "bold");
-                        doc.text("VENDOR", 17, iSectionY + 5);
-                        doc.text("SHIP TO", iCol2X + 2, iSectionY + 5);
-
-                        // Content
-                        doc.setTextColor(...blackColor); // Back to Black
-                        doc.setFont("helvetica", "normal");
-                        var iVendorY = iSectionY + 12;
-
-                        // Ensure supplier object exists
-                        var oSupplier = oReq.supplier || { name: "Unknown Vendor", city: "Unknown" };
-                        var sVendorName = oSupplier.name || "Vendor Name";
-                        var sVendorCity = oSupplier.city || "City, Country";
-
-                        doc.text(sVendorName, 15, iVendorY);
-                        doc.text("Department: Sales", 15, iVendorY += 5);
-                        doc.text(sVendorCity, 15, iVendorY += 5);
-                        doc.text("Phone: (000) 000-0000", 15, iVendorY += 5);
-
-                        var iShipY = iSectionY + 12;
-                        // Mock Address based on Company Code
-                        var sShipName = oReq.requestor || "Employee User";
-                        var sShipCompany = "Tech Solutions Inc. (Global HQ)";
-                        var sShipAddr1 = "456 Corporate Blvd";
-                        var sShipAddr2 = "New York, NY 10001";
-
-                        doc.text(sShipName, iCol2X, iShipY);
-                        doc.text(sShipCompany, iCol2X, iShipY += 5);
-                        doc.text(sShipAddr1, iCol2X, iShipY += 5);
-                        doc.text(sShipAddr2, iCol2X, iShipY += 5);
-                        doc.text("Phone: (212) 555-9999", iCol2X, iShipY += 5);
-
-                        // --- REQUISITION DETAILS BAR ---
-                        var iBarY = 110;
-                        doc.setFillColor(...primaryColor);
-                        doc.rect(15, iBarY, 190, 7, 'F');
-
-                        doc.setTextColor(255, 255, 255);
-                        doc.setFont("helvetica", "bold");
-                        doc.text("REQUISITIONER", 20, iBarY + 5);
-                        doc.text("SHIP VIA", 70, iBarY + 5);
-                        doc.text("F.O.B.", 120, iBarY + 5);
-                        doc.text("SHIPPING TERMS", 160, iBarY + 5);
-
-                        doc.setTextColor(...blackColor);
-                        doc.setFont("helvetica", "normal");
-                        doc.text(oReq.requestor || "Employee", 20, iBarY + 14);
-                        doc.text("FedEx Ground", 70, iBarY + 14);
-                        doc.text("Origin", 120, iBarY + 14);
-                        doc.text("Prepaid", 160, iBarY + 14);
-
-                        doc.setDrawColor(...primaryColor);
-                        doc.line(15, iBarY + 16, 205, iBarY + 16);
-
-                        // --- TABLE ---
-                        // Prepare Data
-                        var kpData = [];
-                        var fSubtotal = 0.0;
-                        var aItems = oReq.items || [];
-
-                        aItems.forEach(function (item) {
-                            var fTotal = parseFloat(item.price) * item.quantity;
-                            fSubtotal += fTotal;
-
-                            // Fix Item # logic: Use material_ID or nested material.ID or 'Manual'
-                            var sMatID = item.material_ID;
-                            if (!sMatID && item.material) {
-                                sMatID = item.material.ID;
+                // 2. Get Line Items directly from the Table to ensure WYSIWYG
+                var aTableItems = oView.byId("itemsTable").getItems();
+                var aItemsData = [];
+                aTableItems.forEach(function (oItem) {
+                    var oItemContext = oItem.getBindingContext();
+                    if (oItemContext) {
+                        aItemsData.push({
+                            material_ID: oItemContext.getProperty("material_ID"),
+                            materialDescription: oItemContext.getProperty("materialDescription"),
+                            quantity: oItemContext.getProperty("quantity"),
+                            price: oItemContext.getProperty("price"),
+                            // Also get nested material info for fallback
+                            material: {
+                                ID: oItemContext.getProperty("material/ID"),
+                                description: oItemContext.getProperty("material/description")
                             }
-                            if (!sMatID) {
-                                sMatID = "Manual";
-                            }
-
-                            // Fix Description: Use materialDescription or nested material.description
-                            var sDesc = item.materialDescription;
-                            if (!sDesc && item.material) {
-                                sDesc = item.material.description;
-                            }
-
-                            kpData.push([
-                                sMatID,
-                                sDesc || "Item Description",
-                                item.quantity,
-                                parseFloat(item.price).toFixed(2),
-                                fTotal.toFixed(2)
-                            ]);
                         });
+                    }
+                });
 
-                        // Empty rows filler
-                        while (kpData.length < 15) {
-                            kpData.push(["", "", "", "", ""]);
-                        }
+                // Update Status first
+                oContext.setProperty("status", "Ordered");
+                oView.getModel().submitBatch("auto");
 
-                        doc.autoTable({
-                            startY: 130,
-                            head: [['ITEM #', 'DESCRIPTION', 'QTY', 'UNIT PRICE', 'TOTAL']],
-                            body: kpData,
-                            theme: 'plain',
-                            headStyles: {
-                                fillColor: primaryColor,
-                                textColor: [255, 255, 255],
-                                fontStyle: 'bold',
-                                halign: 'center'
-                            },
-                            columnStyles: {
-                                0: { cellWidth: 30 },
-                                1: { cellWidth: 80 },
-                                2: { cellWidth: 20, halign: 'center' },
-                                3: { cellWidth: 30, halign: 'right' },
-                                4: { cellWidth: 30, halign: 'right', fillColor: [240, 240, 240] }
-                            },
-                            styles: {
-                                lineColor: primaryColor,
-                                lineWidth: 0.1,
-                                fontSize: 9
-                            },
-                            margin: { top: 130, left: 15, right: 10 }
-                        });
-
-                        // --- TOTALS SECTION ---
-                        var finalY = doc.lastAutoTable.finalY + 5;
-                        var iTotalX = 140;
-                        var iValX = 200;
-
-                        doc.setFont("helvetica", "normal");
-                        doc.text("SUBTOTAL", iTotalX, finalY);
-                        doc.text(fSubtotal.toFixed(2), iValX, finalY, { align: "right" });
-
-                        doc.text("TAX", iTotalX, finalY += 6);
-                        doc.text("0.00", iValX, finalY, { align: "right" });
-
-                        doc.text("SHIPPING", iTotalX, finalY += 6);
-                        doc.text("0.00", iValX, finalY, { align: "right" });
-
-                        doc.text("OTHER", iTotalX, finalY += 6);
-                        doc.text("0.00", iValX, finalY, { align: "right" });
-
-                        // Total Bar
-                        doc.setFillColor(255, 200, 0); // Orange/Yellow
-                        doc.rect(iTotalX - 5, finalY + 2, 70, 8, 'F');
-
-                        doc.setTextColor(...blackColor);
-                        doc.setFont("helvetica", "bold");
-                        doc.text("TOTAL", iTotalX, finalY + 7);
-                        doc.text("$ " + fSubtotal.toFixed(2), iValX, finalY + 7, { align: "right" });
-
-                        // --- COMMENTS ---
-                        var iCommentY = doc.lastAutoTable.finalY + 5;
-                        doc.setFillColor(...primaryColor);
-                        doc.rect(15, iCommentY, 100, 6, 'F');
-                        doc.setTextColor(255, 255, 255);
-                        doc.setFontSize(10);
-                        doc.text("Comments or Special Instructions", 17, iCommentY + 4);
-
-                        // --- FOOTER ---
-                        var pageHeight = doc.internal.pageSize.height;
-                        doc.setTextColor(...blackColor); // Reset to black
-                        doc.setFontSize(9);
-                        doc.setFont("helvetica", "normal");
-                        doc.text("If you have any questions about this purchase order, please contact", 105, pageHeight - 20, { align: "center" });
-                        doc.text("[Name, Phone #, E-mail]", 105, pageHeight - 15, { align: "center" });
-
-                        doc.setDrawColor(...primaryColor);
-                        doc.setLineWidth(0.5);
-                        doc.rect(5, 5, 200, 287);
-
-                        doc.save("PurchaseOrder_" + sDisplayID + ".pdf");
-                        MessageBox.success("Purchase Order PDF Generated!");
-
-                    } catch (e) {
-                        MessageBox.error("PDF Generation failed: " + e.message);
-                        console.error(e);
+                // Generate PDF
+                try {
+                    const { jsPDF } = window.jspdf;
+                    if (!jsPDF) {
+                        MessageBox.error("jsPDF library not loaded. Please check internet connection.");
+                        return;
                     }
 
-                }.bind(this)).catch(function (err) {
-                    MessageBox.error("Error fetching data for PO: " + err.message);
-                });
+                    var doc = new jsPDF();
+
+                    // Colors
+                    var primaryColor = [0, 166, 81]; // Green #00A651
+                    var secondaryColor = [0, 128, 0];
+                    var blackColor = [0, 0, 0];
+
+                    // --- HEADER ---
+                    doc.setFillColor(...primaryColor);
+                    doc.setTextColor(...primaryColor);
+                    doc.setFontSize(22);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("GimBooks", 15, 25);
+
+                    // Right Side Header
+                    doc.setTextColor(...primaryColor);
+                    doc.setFontSize(24);
+                    doc.text("PURCHASE ORDER", 200, 20, { align: "right" });
+
+                    doc.setTextColor(...blackColor); // Black
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    var sDate = new Date().toLocaleDateString();
+                    doc.text("DATE", 160, 30);
+                    doc.text(sDate, 200, 30, { align: "right" });
+                    doc.text("PO #", 160, 35);
+                    doc.text(sDisplayID, 200, 35, { align: "right" });
+
+                    // --- COMPANY INFO (Top Left) ---
+                    doc.setFontSize(9);
+                    doc.setTextColor(...blackColor);
+                    var iY = 35;
+                    doc.text("GimBooks Inc.", 15, iY += 5);
+                    doc.text("1234 Innovation Drive", 15, iY += 5);
+                    doc.text("Tech City, TC 90210", 15, iY += 5);
+                    doc.text("Phone: (555) 123-4567", 15, iY += 5);
+                    doc.text("Website: www.gimbooks.com", 15, iY += 5);
+
+                    // --- VENDOR & SHIP TO SECTIONS ---
+                    var iSectionY = 70;
+                    var iCol2X = 110;
+
+                    // Headers
+                    doc.setFillColor(...primaryColor);
+                    doc.rect(15, iSectionY, 80, 7, 'F'); // Vendor Box
+                    doc.rect(iCol2X, iSectionY, 80, 7, 'F'); // Ship To Box
+
+                    doc.setTextColor(255, 255, 255); // White
+                    doc.setFont("helvetica", "bold");
+                    doc.text("VENDOR", 17, iSectionY + 5);
+                    doc.text("SHIP TO", iCol2X + 2, iSectionY + 5);
+
+                    // Content
+                    doc.setTextColor(...blackColor); // Back to Black
+                    doc.setFont("helvetica", "normal");
+                    var iVendorY = iSectionY + 12;
+
+                    // Use captured Primitive Data
+                    var sVName = oReq.supplier.name;
+                    // If still unknown, check if we can get it from context property with slash
+                    if (sVName === "Unknown Vendor" && oContext.getProperty("supplier/name")) {
+                        sVName = oContext.getProperty("supplier/name");
+                        sSupplierCity = oContext.getProperty("supplier/city");
+                    }
+
+                    doc.text(sVName || "Vendor Name", 15, iVendorY);
+                    doc.text("Department: Sales", 15, iVendorY += 5);
+                    doc.text(sSupplierCity || "City, Country", 15, iVendorY += 5);
+                    doc.text("Phone: (000) 000-0000", 15, iVendorY += 5);
+
+                    var iShipY = iSectionY + 12;
+                    // Mock Address based on Company Code
+                    var sShipName = oReq.requestor || "Employee User";
+                    var sShipCompany = "Tech Solutions Inc. (Global HQ)";
+                    var sShipAddr1 = "456 Corporate Blvd";
+                    var sShipAddr2 = "New York, NY 10001";
+
+                    doc.text(sShipName, iCol2X, iShipY);
+                    doc.text(sShipCompany, iCol2X, iShipY += 5);
+                    doc.text(sShipAddr1, iCol2X, iShipY += 5);
+                    doc.text(sShipAddr2, iCol2X, iShipY += 5);
+                    doc.text("Phone: (212) 555-9999", iCol2X, iShipY += 5);
+
+                    // --- REQUISITION DETAILS BAR ---
+                    var iBarY = 110;
+                    doc.setFillColor(...primaryColor);
+                    doc.rect(15, iBarY, 190, 7, 'F');
+
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("REQUISITIONER", 20, iBarY + 5);
+                    doc.text("SHIP VIA", 70, iBarY + 5);
+                    doc.text("F.O.B.", 120, iBarY + 5);
+                    doc.text("SHIPPING TERMS", 160, iBarY + 5);
+
+                    doc.setTextColor(...blackColor);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(oReq.requestor || "Employee", 20, iBarY + 14);
+                    doc.text("FedEx Ground", 70, iBarY + 14);
+                    doc.text("Origin", 120, iBarY + 14);
+                    doc.text("Prepaid", 160, iBarY + 14);
+
+                    doc.setDrawColor(...primaryColor);
+                    doc.line(15, iBarY + 16, 205, iBarY + 16);
+
+                    // --- TABLE ---
+                    var kpData = [];
+                    var fSubtotal = 0.0;
+
+                    aItemsData.forEach(function (item) {
+                        var fTotal = parseFloat(item.price) * item.quantity;
+                        fSubtotal += fTotal;
+
+                        // Fix Item # logic: Use material_ID or nested material.ID or 'Manual'
+                        var sMatID = item.material_ID;
+                        if (!sMatID && item.material) {
+                            sMatID = item.material.ID;
+                        }
+                        if (!sMatID) {
+                            sMatID = ""; // Changed to Blank as per request/professional look
+                        }
+
+                        // Fix Description: Use materialDescription or nested material.description
+                        var sDesc = item.materialDescription;
+                        if (!sDesc && item.material) {
+                            sDesc = item.material.description;
+                        }
+
+                        kpData.push([
+                            sMatID,
+                            sDesc || "Item Description",
+                            item.quantity,
+                            parseFloat(item.price).toFixed(2),
+                            fTotal.toFixed(2)
+                        ]);
+                    });
+
+                    // Empty rows filler
+                    while (kpData.length < 15) {
+                        kpData.push(["", "", "", "", ""]);
+                    }
+
+                    doc.autoTable({
+                        startY: 130,
+                        head: [['ITEM #', 'DESCRIPTION', 'QTY', 'UNIT PRICE', 'TOTAL']],
+                        body: kpData,
+                        theme: 'plain',
+                        headStyles: {
+                            fillColor: primaryColor,
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold',
+                            halign: 'center'
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 30 },
+                            1: { cellWidth: 80 },
+                            2: { cellWidth: 20, halign: 'center' },
+                            3: { cellWidth: 30, halign: 'right' },
+                            4: { cellWidth: 30, halign: 'right', fillColor: [240, 240, 240] }
+                        },
+                        styles: {
+                            lineColor: primaryColor,
+                            lineWidth: 0.1,
+                            fontSize: 9
+                        },
+                        margin: { top: 130, left: 15, right: 10 }
+                    });
+
+                    // --- TOTALS SECTION ---
+                    var finalY = doc.lastAutoTable.finalY + 5;
+                    var iTotalX = 140;
+                    var iValX = 200;
+
+                    doc.setFont("helvetica", "normal");
+                    doc.text("SUBTOTAL", iTotalX, finalY);
+                    doc.text(fSubtotal.toFixed(2), iValX, finalY, { align: "right" });
+
+                    doc.text("TAX", iTotalX, finalY += 6);
+                    doc.text("0.00", iValX, finalY, { align: "right" });
+
+                    doc.text("SHIPPING", iTotalX, finalY += 6);
+                    doc.text("0.00", iValX, finalY, { align: "right" });
+
+                    doc.text("OTHER", iTotalX, finalY += 6);
+                    doc.text("0.00", iValX, finalY, { align: "right" });
+
+                    // Total Bar
+                    doc.setFillColor(255, 200, 0); // Orange/Yellow
+                    doc.rect(iTotalX - 5, finalY + 2, 70, 8, 'F');
+
+                    doc.setTextColor(...blackColor);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("TOTAL", iTotalX, finalY + 7);
+                    doc.text("$ " + fSubtotal.toFixed(2), iValX, finalY + 7, { align: "right" });
+
+                    // --- COMMENTS ---
+                    var iCommentY = doc.lastAutoTable.finalY + 5;
+                    doc.setFillColor(...primaryColor);
+                    doc.rect(15, iCommentY, 100, 6, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(10);
+                    doc.text("Comments or Special Instructions", 17, iCommentY + 4);
+
+                    // --- FOOTER ---
+                    var pageHeight = doc.internal.pageSize.height;
+                    doc.setTextColor(...blackColor); // Reset to black
+                    doc.setFontSize(9);
+                    doc.setFont("helvetica", "normal");
+                    doc.text("If you have any questions about this purchase order, please contact", 105, pageHeight - 20, { align: "center" });
+                    doc.text("[Name, Phone #, E-mail]", 105, pageHeight - 15, { align: "center" });
+
+                    doc.setDrawColor(...primaryColor);
+                    doc.setLineWidth(0.5);
+                    doc.rect(5, 5, 200, 287);
+
+                    doc.save("PurchaseOrder_" + sDisplayID + ".pdf");
+                    MessageBox.success("Purchase Order PDF Generated!");
+
+                } catch (e) {
+                    MessageBox.error("PDF Generation failed: " + e.message);
+                    console.error(e);
+                }
             },
 
             onGoodsIssue: function () {
