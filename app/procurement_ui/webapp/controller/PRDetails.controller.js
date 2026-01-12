@@ -514,11 +514,15 @@ sap.ui.define([
                     var oModel = this.getView().getModel();
                     var oBindList = oModel.bindList("/Warehouse");
 
-                    oBindList.requestContexts().then(function (aWarehouseContexts) {
+                    // Fetch up to 100 items
+                    oBindList.requestContexts(0, 100).then(function (aWarehouseContexts) {
                         var bUpdatesMade = false;
                         var aPDFItems = []; // Collect data for PDF
 
                         console.log("Goods Issue: Warehouse Contexts Loaded:", aWarehouseContexts.length);
+                        // Log loaded IDs for debugging
+                        var aLoadedIDs = aWarehouseContexts.map(c => c.getProperty("productID"));
+                        console.log("Warehouse IDs:", aLoadedIDs);
 
                         // 2. Iterate Items and Update Warehouse Stock
                         aReqItems.forEach(function (reqItem) {
