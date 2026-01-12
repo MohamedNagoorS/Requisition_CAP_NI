@@ -415,7 +415,7 @@ sap.ui.define([
                     });
 
                     // Empty rows filler
-                    while (kpData.length < 15) {
+                    while (kpData.length < 12) {
                         kpData.push(["", "", "", "", ""]);
                     }
 
@@ -454,13 +454,13 @@ sap.ui.define([
                     doc.text("SUBTOTAL", iTotalX, finalY);
                     doc.text(fSubtotal.toFixed(2), iValX, finalY, { align: "right" });
 
-                    doc.text("TAX", iTotalX, finalY += 6);
+                    doc.text("TAX", iTotalX, finalY += 5);
                     doc.text("0.00", iValX, finalY, { align: "right" });
 
-                    doc.text("SHIPPING", iTotalX, finalY += 6);
+                    doc.text("SHIPPING", iTotalX, finalY += 5);
                     doc.text("0.00", iValX, finalY, { align: "right" });
 
-                    doc.text("OTHER", iTotalX, finalY += 6);
+                    doc.text("OTHER", iTotalX, finalY += 5);
                     doc.text("0.00", iValX, finalY, { align: "right" });
 
                     // Total Bar
