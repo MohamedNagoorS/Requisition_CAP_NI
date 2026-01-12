@@ -684,9 +684,6 @@ sap.ui.define([
                         item.qty,
                         item.po,
                         item.description,
-                        item.weight,
-                        item.volumen,
-                        item.volWeight,
                         item.location
                     ]);
 
@@ -695,7 +692,7 @@ sap.ui.define([
 
                     doc.autoTable({
                         startY: 125,
-                        head: [['QTY', 'PO', 'ITEM / DESCRIPTION', 'WEIGHT', 'VOLUMEN', 'VOL WEIGHT', 'LOCATION']],
+                        head: [['QTY', 'PO', 'ITEM / DESCRIPTION', 'LOCATION']],
                         body: tableBody,
                         theme: 'plain',
                         styles: {
@@ -717,8 +714,8 @@ sap.ui.define([
                     // Totals Box
                     doc.autoTable({
                         startY: finalY, // attach to bottom
-                        head: [['PIECES', 'WEIGHT', 'VOLUME', 'VOL. WEIGHT']],
-                        body: [[totalQty, "0.00 kg", "0.00 m3", "0.00 kg"]],
+                        head: [['PIECES']],
+                        body: [[totalQty]],
                         theme: 'plain',
                         styles: {
                             lineColor: [0, 0, 0],
@@ -731,8 +728,8 @@ sap.ui.define([
                             textColor: [0, 0, 0],
                             fontStyle: 'bold'
                         },
-                        tableWidth: 100,
-                        margin: { left: 108 } // Right align roughly
+                        tableWidth: 40, // Reduced width since fewer columns
+                        margin: { left: 108 }
                     });
 
                     // Save
