@@ -41,7 +41,7 @@ sap.ui.define([
                 this.getView().bindElement({
                     path: sPath,
                     parameters: {
-                        $expand: "items,supplier,purchaseGroup"
+                        $expand: "items($expand=material),supplier,purchaseGroup"
                     },
                     events: {
                         dataReceived: function (oEvent) {
@@ -106,8 +106,19 @@ sap.ui.define([
                                 bAllItemsInStock = false;
                             } else {
                                 aReqItems.forEach(function (reqItem) {
-                                    var oStock = aWarehouseItems.find(w => w.productID === reqItem.material_ID);
+                                    // Skip check for manual items or if no material ID
+                                    if (!reqItem.material_ID) {
+                                        console.log("Item is manual or missing material_ID, skipping stock check:", reqItem);
+                                        return;
+                                    }
+
+                                    var sReqMatID = reqItem.material_ID;
+                                    var oStock = aWarehouseItems.find(w => w.productID === sReqMatID);
+
+                                    console.log("Checking Stock for:", sReqMatID, "Found:", oStock);
+
                                     if (!oStock || oStock.quantity < reqItem.quantity) {
+                                        console.warn("Insufficient stock or product not found for:", sReqMatID);
                                         bAllItemsInStock = false;
                                     }
                                 });
