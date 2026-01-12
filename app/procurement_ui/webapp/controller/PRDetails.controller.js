@@ -555,11 +555,16 @@ sap.ui.define([
 
                         // 4. Submit All Changes (Header Status + Warehouse Updates)
                         oModel.submitBatch("auto").then(function () {
-                            MessageBox.success("Goods Issued Successfully! Stock updated. Generating Receipt...");
+                            console.log("Goods Issue Submitted. Generating Receipt...");
+                            MessageBox.success("Goods Issued Successfully! Receipt Generated.");
                             this._updateActionState();
 
                             // --- GENERATE PDF ---
-                            this._generateGoodsReceiptPDF(sPOID, aPDFItems);
+                            if (this._generateGoodsReceiptPDF) {
+                                this._generateGoodsReceiptPDF(sPOID, aPDFItems);
+                            } else {
+                                console.error("_generateGoodsReceiptPDF not defined");
+                            }
 
                         }.bind(this)).catch(function (err) {
                             MessageBox.error("Error issuing goods: " + err.message);
@@ -574,156 +579,168 @@ sap.ui.define([
             },
 
             _generateGoodsReceiptPDF: function (sPOID, aItems) {
-                var doc = new jspdf.jsPDF();
-
-                // --- HEADER ---
-                doc.setFontSize(22);
-                doc.setTextColor(0, 100, 0); // Dark Green
-                doc.text("GimBooks", 15, 20); // Replaces Linbis logo
-
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.text("GimBooks Inc.", 60, 15);
-                doc.text("5410 NW 72 Ave", 60, 20);
-                doc.text("Miami, FL 33126 US", 60, 25);
-                doc.text("Phone: 800-519-5322 Fax: 888-515-4522", 60, 30);
-                doc.text("info@gimbooks.com", 60, 35);
-                doc.text("www.gimbooks.com", 60, 40);
-
-                doc.setFontSize(16);
-                doc.setTextColor(150, 150, 150); // Grey
-                doc.text("WAREHOUSE RECEIPT", 140, 15);
-
-                // Mock Barcode
-                doc.setLineWidth(0.5);
-                for (var i = 0; i < 40; i++) {
-                    doc.line(140 + (i * 1.5), 20, 140 + (i * 1.5), 30);
-                }
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0);
-                doc.text("WRI" + sPOID.replace("PR-", ""), 140, 35); // Receipt #
-
-                doc.setFontSize(8);
-                doc.text("Printed On: " + new Date().toLocaleDateString(), 15, 50);
-
-                // --- BOXES ---
-                doc.setLineWidth(0.1);
-
-                // SHIPPER BOX
-                doc.rect(15, 55, 90, 30);
-                doc.setFillColor(240, 240, 240);
-                doc.rect(15, 55, 90, 5, 'F');
-                doc.setFont("helvetica", "bold");
-                doc.text("SHIPPER", 17, 59);
-
-                doc.setFont("helvetica", "normal");
-                doc.text("FedEx Express", 17, 65);
-                doc.text("123 Logistics Way", 17, 70);
-                doc.text("Memphis, TN 38120", 17, 75);
-                doc.text("United States", 17, 80);
-
-                // CONSIGNEE BOX
-                doc.rect(15, 90, 90, 30);
-                doc.setFillColor(240, 240, 240);
-                doc.rect(15, 90, 90, 5, 'F');
-                doc.setFont("helvetica", "bold");
-                doc.text("CONSIGNEE", 17, 94);
-
-                doc.setFont("helvetica", "normal");
-                doc.text("GimBooks Inc.", 17, 100);
-                doc.text("11001 SW 8th Street", 17, 105);
-                doc.text("Doral, FL 33428", 17, 110);
-                doc.text("United States", 17, 115);
-
-                // CHECKBOXES (Right Side)
-                var checkX = 110;
-                var checkY = 55;
-                var checkLabels = ["COMMERCIAL INVOICE", "PACKING LIST", "HAZARDOUS MATERIAL", "BONDED", "OVERSIZE", "OVERWEIGHT", "DISCREPANCY", "FRAGILE"];
-
-                checkLabels.forEach(function (label, index) {
-                    var x = index < 4 ? checkX : checkX + 50;
-                    var y = index < 4 ? checkY + (index * 8) : checkY + ((index - 4) * 8);
-                    doc.rect(x, y, 4, 4);
-                    doc.text(label, x + 6, y + 3);
-                });
-
-                // ADDITIONAL INFO
-                doc.rect(108, 90, 90, 30);
-                doc.setFillColor(240, 240, 240);
-                doc.rect(108, 90, 90, 5, 'F');
-                doc.setFont("helvetica", "bold");
-                doc.text("ADDITIONAL INFORMATION", 110, 94);
-
-                doc.setFont("helvetica", "bold");
-                doc.text("DATE IN:", 110, 100);
-                doc.setFont("helvetica", "normal");
-                doc.text(new Date().toLocaleDateString(), 130, 100);
-
-                doc.setFont("helvetica", "bold");
-                doc.text("DIVISION:", 110, 105);
-                doc.setFont("helvetica", "normal");
-                doc.text("Miami", 130, 105);
-
-                // --- TABLE ---
-                var finalY = 125;
-
-                var tableBody = aItems.map(item => [
-                    item.qty,
-                    item.po,
-                    item.description,
-                    item.weight,
-                    item.volumen,
-                    item.volWeight,
-                    item.location
-                ]);
-
-                // Add totals row if needed, strictly we just want total pieces
-                var totalQty = aItems.reduce((sum, item) => sum + item.qty, 0);
-
-                doc.autoTable({
-                    startY: 125,
-                    head: [['QTY', 'PO', 'ITEM / DESCRIPTION', 'WEIGHT', 'VOLUMEN', 'VOL WEIGHT', 'LOCATION']],
-                    body: tableBody,
-                    theme: 'plain',
-                    styles: {
-                        lineColor: [0, 0, 0],
-                        lineWidth: 0.1,
-                        fontSize: 8
-                    },
-                    headStyles: {
-                        fillColor: [255, 255, 255],
-                        textColor: [0, 0, 0],
-                        fontStyle: 'bold',
-                        lineWidth: 0.1,
-                        lineColor: [0, 0, 0] // bordered header
+                try {
+                    // Safety check for jsPDF
+                    if (!window.jspdf) {
+                        MessageBox.error("jsPDF library not found. Please reload the page.");
+                        return;
                     }
-                });
 
-                finalY = doc.lastAutoTable.finalY;
+                    const { jsPDF } = window.jspdf;
+                    var doc = new jsPDF();
 
-                // Totals Box
-                doc.autoTable({
-                    startY: finalY, // attach to bottom
-                    head: [['PIECES', 'WEIGHT', 'VOLUME', 'VOL. WEIGHT']],
-                    body: [[totalQty, "0.00 kg", "0.00 m3", "0.00 kg"]],
-                    theme: 'plain',
-                    styles: {
-                        lineColor: [0, 0, 0],
-                        lineWidth: 0.1,
-                        fontSize: 8,
-                        halign: 'center'
-                    },
-                    headStyles: {
-                        fillColor: [255, 255, 255],
-                        textColor: [0, 0, 0],
-                        fontStyle: 'bold'
-                    },
-                    tableWidth: 100,
-                    margin: { left: 108 } // Right align roughly
-                });
+                    // --- HEADER ---
+                    doc.setFontSize(22);
+                    doc.setTextColor(0, 100, 0); // Dark Green
+                    doc.text("GimBooks", 15, 20); // Replaces Linbis logo
 
-                // Save
-                doc.save("GoodsReceipt_" + sPOID + ".pdf");
+                    doc.setFontSize(10);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text("GimBooks Inc.", 60, 15);
+                    doc.text("5410 NW 72 Ave", 60, 20);
+                    doc.text("Miami, FL 33126 US", 60, 25);
+                    doc.text("Phone: 800-519-5322 Fax: 888-515-4522", 60, 30);
+                    doc.text("info@gimbooks.com", 60, 35);
+                    doc.text("www.gimbooks.com", 60, 40);
+
+                    doc.setFontSize(16);
+                    doc.setTextColor(150, 150, 150); // Grey
+                    doc.text("WAREHOUSE RECEIPT", 140, 15);
+
+                    // Mock Barcode
+                    doc.setLineWidth(0.5);
+                    for (var i = 0; i < 40; i++) {
+                        doc.line(140 + (i * 1.5), 20, 140 + (i * 1.5), 30);
+                    }
+                    doc.setFontSize(12);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text("WRI" + sPOID.replace("PR-", ""), 140, 35); // Receipt #
+
+                    doc.setFontSize(8);
+                    doc.text("Printed On: " + new Date().toLocaleDateString(), 15, 50);
+
+                    // --- BOXES ---
+                    doc.setLineWidth(0.1);
+
+                    // SHIPPER BOX
+                    doc.rect(15, 55, 90, 30);
+                    doc.setFillColor(240, 240, 240);
+                    doc.rect(15, 55, 90, 5, 'F');
+                    doc.setFont("helvetica", "bold");
+                    doc.text("SHIPPER", 17, 59);
+
+                    doc.setFont("helvetica", "normal");
+                    doc.text("FedEx Express", 17, 65);
+                    doc.text("123 Logistics Way", 17, 70);
+                    doc.text("Memphis, TN 38120", 17, 75);
+                    doc.text("United States", 17, 80);
+
+                    // CONSIGNEE BOX
+                    doc.rect(15, 90, 90, 30);
+                    doc.setFillColor(240, 240, 240);
+                    doc.rect(15, 90, 90, 5, 'F');
+                    doc.setFont("helvetica", "bold");
+                    doc.text("CONSIGNEE", 17, 94);
+
+                    doc.setFont("helvetica", "normal");
+                    doc.text("GimBooks Inc.", 17, 100);
+                    doc.text("11001 SW 8th Street", 17, 105);
+                    doc.text("Doral, FL 33428", 17, 110);
+                    doc.text("United States", 17, 115);
+
+                    // CHECKBOXES (Right Side)
+                    var checkX = 110;
+                    var checkY = 55;
+                    var checkLabels = ["COMMERCIAL INVOICE", "PACKING LIST", "HAZARDOUS MATERIAL", "BONDED", "OVERSIZE", "OVERWEIGHT", "DISCREPANCY", "FRAGILE"];
+
+                    checkLabels.forEach(function (label, index) {
+                        var x = index < 4 ? checkX : checkX + 50;
+                        var y = index < 4 ? checkY + (index * 8) : checkY + ((index - 4) * 8);
+                        doc.rect(x, y, 4, 4);
+                        doc.text(label, x + 6, y + 3);
+                    });
+
+                    // ADDITIONAL INFO
+                    doc.rect(108, 90, 90, 30);
+                    doc.setFillColor(240, 240, 240);
+                    doc.rect(108, 90, 90, 5, 'F');
+                    doc.setFont("helvetica", "bold");
+                    doc.text("ADDITIONAL INFORMATION", 110, 94);
+
+                    doc.setFont("helvetica", "bold");
+                    doc.text("DATE IN:", 110, 100);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(new Date().toLocaleDateString(), 130, 100);
+
+                    doc.setFont("helvetica", "bold");
+                    doc.text("DIVISION:", 110, 105);
+                    doc.setFont("helvetica", "normal");
+                    doc.text("Miami", 130, 105);
+
+                    // --- TABLE ---
+                    var finalY = 125;
+
+                    var tableBody = aItems.map(item => [
+                        item.qty,
+                        item.po,
+                        item.description,
+                        item.weight,
+                        item.volumen,
+                        item.volWeight,
+                        item.location
+                    ]);
+
+                    // Add totals row if needed
+                    var totalQty = aItems.reduce((sum, item) => sum + item.qty, 0);
+
+                    doc.autoTable({
+                        startY: 125,
+                        head: [['QTY', 'PO', 'ITEM / DESCRIPTION', 'WEIGHT', 'VOLUMEN', 'VOL WEIGHT', 'LOCATION']],
+                        body: tableBody,
+                        theme: 'plain',
+                        styles: {
+                            lineColor: [0, 0, 0],
+                            lineWidth: 0.1,
+                            fontSize: 8
+                        },
+                        headStyles: {
+                            fillColor: [255, 255, 255],
+                            textColor: [0, 0, 0],
+                            fontStyle: 'bold',
+                            lineWidth: 0.1,
+                            lineColor: [0, 0, 0] // bordered header
+                        }
+                    });
+
+                    finalY = doc.lastAutoTable.finalY;
+
+                    // Totals Box
+                    doc.autoTable({
+                        startY: finalY, // attach to bottom
+                        head: [['PIECES', 'WEIGHT', 'VOLUME', 'VOL. WEIGHT']],
+                        body: [[totalQty, "0.00 kg", "0.00 m3", "0.00 kg"]],
+                        theme: 'plain',
+                        styles: {
+                            lineColor: [0, 0, 0],
+                            lineWidth: 0.1,
+                            fontSize: 8,
+                            halign: 'center'
+                        },
+                        headStyles: {
+                            fillColor: [255, 255, 255],
+                            textColor: [0, 0, 0],
+                            fontStyle: 'bold'
+                        },
+                        tableWidth: 100,
+                        margin: { left: 108 } // Right align roughly
+                    });
+
+                    // Save
+                    doc.save("GoodsReceipt_" + sPOID + ".pdf");
+                } catch (e) {
+                    console.error("PDF Generation Error: ", e);
+                    MessageBox.error("Failed to generate PDF: " + e.message);
+                }
             },
 
             onNavBack: function () {
