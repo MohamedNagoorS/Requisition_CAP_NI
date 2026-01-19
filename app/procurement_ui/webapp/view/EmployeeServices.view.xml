@@ -1,0 +1,45 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.EmployeeServices"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="Manage Requisitions" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Title text="Employee Self-Service" level="H2" class="sapUiSmallMarginBottom"/>
+                <HBox alignItems="Center" justifyContent="Center" wrap="Wrap" class="sapUiMediumMarginTop">
+                    
+                    <!-- Create Request -->
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressCreateRequest" semanticRole="ListItem">
+                        <f:header>
+                            <card:Header title="Create Request" subtitle="Catalog or Manual" iconSrc="sap-icon://create-form"/>
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiSmallMargin">
+                                <Text text="Create a new purchase requisition using the catalog or free text."/>
+                                <Button text="Create New" type="Emphasized" press=".onPressCreateRequest" class="sapUiSmallMarginTop" width="100%"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                    <!-- My Requisitions -->
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressHistory" semanticRole="ListItem">
+                        <f:header>
+                            <card:Header title="My Requisitions" subtitle="View history and status" iconSrc="sap-icon://history"/>
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiSmallMargin">
+                                <Text text="Track the status of your submitted requisitions."/>
+                                <Button text="View History" type="Default" press=".onPressHistory" class="sapUiSmallMarginTop" width="100%"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                </HBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

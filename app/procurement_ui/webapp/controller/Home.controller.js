@@ -13,25 +13,14 @@ sap.ui.define([
 
             },
 
-            onPressCreateRequest: function () {
+            onPressEmployeeServices: function () {
                 var oRouter = UIComponent.getRouterFor(this);
-                // Navigate to the "Unified" Create Request view
-                oRouter.navTo("RouteManualPR");
+                oRouter.navTo("RouteEmployeeServices");
             },
 
-            onPressHistory: function () {
+            onPressAdminServices: function () {
                 var oRouter = UIComponent.getRouterFor(this);
-                oRouter.navTo("RouteRequisitionList");
-            },
-
-            onPressManager: function () {
-                var oRouter = UIComponent.getRouterFor(this);
-                oRouter.navTo("RouteManagerApprovals");
-            },
-
-            onPressAdmin: function () {
-                var oRouter = UIComponent.getRouterFor(this);
-                oRouter.navTo("RouteAdmin");
+                oRouter.navTo("RouteAdminServices");
             }
         });
     }
