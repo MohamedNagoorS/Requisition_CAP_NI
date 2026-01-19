@@ -8,6 +8,7 @@
     displayBlock="true">
     <Page title="Procurement Home" class="sapUiContentPadding">
         <content>
+            <VBox class="sapUiSmallMargin">
                 <Title text="Choose your dashboard" level="H2" class="sapUiSmallMarginBottom"/>
                 <HBox alignItems="Center" justifyContent="Center" wrap="Wrap">
                     
