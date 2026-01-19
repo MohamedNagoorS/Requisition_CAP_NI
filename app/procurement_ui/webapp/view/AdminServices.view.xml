@@ -1,0 +1,45 @@
+<mvc:View
+    controllerName="com.procurement.ui.controller.AdminServices"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+    <Page title="Administration &amp; Approvals" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Title text="Management Console" level="H2" class="sapUiSmallMarginBottom"/>
+                <HBox alignItems="Center" justifyContent="Center" wrap="Wrap" class="sapUiMediumMarginTop">
+                    
+                    <!-- Manager Approval -->
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressManager" semanticRole="ListItem">
+                        <f:header>
+                            <card:Header title="Manager Approval" subtitle="Review pending requests" iconSrc="sap-icon://manager"/>
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiSmallMargin">
+                                <Text text="Approve or reject pending purchase requisitions."/>
+                                <Button text="Go to Approvals" type="Emphasized" press=".onPressManager" class="sapUiSmallMarginTop" width="100%"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                    <!-- Admin Panel -->
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressAdmin" semanticRole="ListItem">
+                        <f:header>
+                            <card:Header title="Admin Panel" subtitle="Data Cleanup" iconSrc="sap-icon://action-settings"/>
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiSmallMargin">
+                                <Text text="Delete requisitions and manage test data."/>
+                                <Button text="Manage Data" type="Reject" press=".onPressAdmin" class="sapUiSmallMarginTop" width="100%"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                </HBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

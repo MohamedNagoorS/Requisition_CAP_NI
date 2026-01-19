@@ -149,6 +149,20 @@
                     "target": [
                         "TargetAdmin"
                     ]
+                },
+                {
+                    "name": "RouteEmployeeServices",
+                    "pattern": "employeeServices",
+                    "target": [
+                        "TargetEmployeeServices"
+                    ]
+                },
+                {
+                    "name": "RouteAdminServices",
+                    "pattern": "adminServices",
+                    "target": [
+                        "TargetAdminServices"
+                    ]
                 }
             ],
             "targets": {
@@ -214,6 +228,20 @@
                     "clearControlAggregation": false,
                     "viewId": "Admin",
                     "viewName": "Admin"
+                },
+                "TargetEmployeeServices": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "EmployeeServices",
+                    "viewName": "EmployeeServices"
+                },
+                "TargetAdminServices": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "AdminServices",
+                    "viewName": "AdminServices"
                 }
             }
         },

@@ -8,50 +8,31 @@
     displayBlock="true">
     <Page title="Procurement Home" class="sapUiContentPadding">
         <content>
-            <VBox class="sapUiSmallMargin">
-                <Title text="Choose your procurement method" level="H2" class="sapUiSmallMarginBottom"/>
+                <Title text="Choose your dashboard" level="H2" class="sapUiSmallMarginBottom"/>
                 <HBox alignItems="Center" justifyContent="Center" wrap="Wrap">
-                    <GenericTile 
-                        class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" 
-                        header="Create Request" 
-                        subheader="Catalog or Manual" 
-                        press=".onPressCreateRequest">
-                        <TileContent>
-                            <ImageContent src="sap-icon://create-form" />
-                        </TileContent>
-                    </GenericTile>
-                </HBox>
-                <HBox alignItems="Center" justifyContent="Center" wrap="Wrap" class="sapUiSmallMarginTop">
-                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressHistory" semanticRole="ListItem">
+                    
+                    <!-- 1. Manage Requisitions (Employee) -->
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressEmployeeServices" semanticRole="ListItem">
                         <f:header>
-                            <card:Header title="My Requisitions" subtitle="View history and status" iconSrc="sap-icon://history"/>
+                            <card:Header title="Manage Requisitions" subtitle="Procurement &amp; History" iconSrc="sap-icon://cart"/>
                         </f:header>
                         <f:content>
                             <VBox class="sapUiSmallMargin">
-                                <Text text="Track the status of your submitted requisitions."/>
-                                <Button text="View History" type="Default" press=".onPressHistory" class="sapUiSmallMarginTop" width="100%"/>
+                                <Text text="Create new requests or view your requisition history."/>
+                                <Button text="Go to Requisitions" type="Emphasized" press=".onPressEmployeeServices" class="sapUiSmallMarginTop" width="100%"/>
                             </VBox>
                         </f:content>
                     </f:Card>
-                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressManager" semanticRole="ListItem">
+
+                    <!-- 2. Administration (Manager/Admin) -->
+                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressAdminServices" semanticRole="ListItem">
                         <f:header>
-                            <card:Header title="Manager Approval" subtitle="Review pending requests" iconSrc="sap-icon://manager"/>
+                            <card:Header title="Management Console" subtitle="Approvals &amp; Admin" iconSrc="sap-icon://manager"/>
                         </f:header>
                         <f:content>
                             <VBox class="sapUiSmallMargin">
-                                <Text text="Approve or reject pending purchase requisitions."/>
-                                <Button text="Go to Approvals" type="Emphasized" press=".onPressManager" class="sapUiSmallMarginTop" width="100%"/>
-                            </VBox>
-                        </f:content>
-                    </f:Card>
-                    <f:Card class="sapUiMediumMargin" width="300px" height="auto" press=".onPressAdmin" semanticRole="ListItem">
-                        <f:header>
-                            <card:Header title="Admin Panel" subtitle="Data Cleanup" iconSrc="sap-icon://action-settings"/>
-                        </f:header>
-                        <f:content>
-                            <VBox class="sapUiSmallMargin">
-                                <Text text="Delete requisitions and manage test data."/>
-                                <Button text="Manage Data" type="Reject" press=".onPressAdmin" class="sapUiSmallMarginTop" width="100%"/>
+                                <Text text="Manager approvals and system administration."/>
+                                <Button text="Go to Management" type="Default" press=".onPressAdminServices" class="sapUiSmallMarginTop" width="100%"/>
                             </VBox>
                         </f:content>
                     </f:Card>
